@@ -7,6 +7,10 @@ import pandas as pd
 #Importing re to use regular expressions
 import re
 
+#Importing astropy to use constants and coordinates, and units to do conversions
+from astropy import constants as const
+from astropy import units
+
 #defining an empty list galaxy[] to contain each line of our file
 galaxies = []
 
@@ -39,6 +43,12 @@ pattern_1 = re.compile(r' \n')
 #more than one space, only one space in the same field (e.g. for coordinates))
 pattern_2 = re.compile(r'\s\s+')
 
+#the literal newline characters at the end of each line
+pattern_3 = re.compile(r'\n')
+
+#matching a single comma at the beginning of a line
+pattern_4 = re.compile(r'^,')
+
 #Defining a new list galaxies_csv for the csv format
 galaxies_csv = []
 
@@ -50,6 +60,10 @@ for row in galaxies:
     row = re.sub(pattern_1, '\n', row)
     #Directly subbin ',' for each match to the regex pattern in each row
     row = re.sub(pattern_2, ',', row)
+    #removing the literal \n for newline at the end of each row
+    row = re.sub(pattern_3, '', row)
+    #removing the comma at the beginning of lines
+    row = re.sub(pattern_4, '', row)
     #Overwriting the value of each row with the subbed expression
     galaxies_csv.append(row)
     #Incrementing counter after subbin so we start from 0
@@ -62,22 +76,25 @@ if len(galaxies) == len(galaxies_csv):
 else:
     print('Lists have different length, error in conversion')
 
+#Removing the 0th, 2nd and 3rd elements of the list, which are redundant. After
+#deleting [0], elements shift so we have to delete elements 1 and 2 instead
+del galaxies_csv[0]
+del galaxies_csv[1:3]
+
+#Re-formatting the 1st line with correct names for each of the 0 fields
+galaxies_csv[0] = 'Name,Right_Ascension,Declination,Magnitude,Type,Size(angle),Size(kly),Recession_Velocity,Other_Names'
+          
+
+#Renaming the 1st 
+
 with open('data.csv', 'w') as data_csv:
     for row in galaxies_csv:
-        data_csv.writelines(row)
+        data_csv.write(row + '\n')
 
+#reading in the formatted csv file we made as a data frame
+galaxies_frame = pd.read_csv('data.csv')
 
-
-
-#We open another context to 
-#manipulate the copy we created to make it into a csv file. Using r+ which
-#means we can read and write to it
-
-
-
-
-
-
-
-
-    
+#Removing redundant series (columns) from the data frame: the size in arcminutes,
+#the Other_Names and the type field and putting into a new frame
+galaxies_info = galaxies_frame.drop(['Size(angle)','Other_Names','Type'], axis=1)
+galaxies_info['Recession_Velocity'] = galaxies_info['Recession_Velocity']*u.
