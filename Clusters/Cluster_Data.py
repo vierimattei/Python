@@ -7,63 +7,77 @@ import pandas as pd
 #Importing re to use regular expressions
 import re
 
+#defining an empty list galaxy[] to contain each line of our file
+galaxies = []
+
 #Using a contextmanager through 'with' so after we are done with the file it 
 #gets closed automatically
-
 #Copying the data from the original file so we can modify that and leave the 
-#original data intact
+#original data intact. Opening 'data.csv' file equates to creating it if it
+#doesnt yet exist. Here we'' copy the formatted data from galaxies
 
 with open('data.txt', 'r') as data:
-    with open('data.csv', 'w') as data_csv:
+    with open('data.csv', 'r+') as data_csv:
         
+        #writing data from the original file to the galaxy list
+        #line by line so we don't use up all the memory at once
         for line in data:
-            data_csv.write(line)
+            galaxies.append(line)
+                        
+#Contexts for data and data_csv are now closed. 
+            
+# defining the re patterns we want to find. r means include all characters,
+# e.g. a newline is coded as \n. 
 
-#Contexts for data and data_csv are now closed. We open another context to 
-#manipulate the copy we created to make it into a csv file. Using r+ which
-#means we can read and write to it
+#The first few lines have a space before the newline, so that messes up the
+#next regex. So we look for space+newline so we can get rid of the space so that
+#all lines have the same structure
+pattern_1 = re.compile(r' \n')
 
-with open('data.csv', 'r+') as data_csv:
-    galaxies = []
-    
-    #galaxies is initially an empty list, then every line from the text file
-    #is appended to it, so e.g. galaxy[0] is the 1st line of the file etc.
-    for line in data_csv:
-        galaxies.append(line)
+#Finding any number of at least two spaces
+#so we avoid considering the newlines! (there is always only one newline, 
+#more than one space, only one space in the same field (e.g. for coordinates))
+pattern_2 = re.compile(r'\s\s+')
 
-# defining the re patter we want to find. r means include all characters,
-# e.g. a newline is coded as \n. Finding any number of at least two spaces
-#so we avoid considering the newlines!
-pattern = re.compile(r'\s\s+')
+#Defining a new list galaxies_csv for the csv format
+galaxies_csv = []
 
 i = 0
 #finding the matches in the galaxies
 for row in galaxies:
-    matches = pattern.finditer(row)
-    i += 1
-    print('Row ' + str(i))
-    j = 0
-    # matches.append(pattern.finditer(row))
-    for match in matches:
-        j += 1
-        match_pos = (match.span())
-        matched_str = row[match.span()[0]:match.span()[1]]
-        print(matched_str)
-        print('Match ' + str(j) + '=' + '"' + matched_str + '"')
-        row.replace(matched_str, ',')
-        print(row)
+    
+    #Fixing the space+newline in the first few lines
+    row = re.sub(pattern_1, '\n', row)
+    #Directly subbin ',' for each match to the regex pattern in each row
+    row = re.sub(pattern_2, ',', row)
+    #Overwriting the value of each row with the subbed expression
+    galaxies_csv.append(row)
+    #Incrementing counter after subbin so we start from 0
+    i +=1
+
+#Notifying whether lists have same length (which has to be the case for them to
+#be correct))
+if len(galaxies) == len(galaxies_csv):
+    print('Lists have same length, comversion should be OK')
+else:
+    print('Lists have different length, error in conversion')
+
+with open('data.csv', 'w') as data_csv:
+    for row in galaxies_csv:
+        data_csv.writelines(row)
 
 
-# for element in galaxies:
-#     matches.append(pattern.finditer(galaxies[0]))
+
+
+#We open another context to 
+#manipulate the copy we created to make it into a csv file. Using r+ which
+#means we can read and write to it
 
 
 
-# for match in matches:
-#     print(match)
-#     if match != '\n':
-#         print('not a newline!')
-#     else:
-#         print('newline')
+
+
+
+
 
     
