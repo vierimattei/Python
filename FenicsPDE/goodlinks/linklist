@@ -1,0 +1,2 @@
+https://fenicsproject.org/docs/dolfin/	-				A list of all official documentation of dolfin per version
+https://bitbucket.org/fenics-project/workspace/projects/CORE		Bitbucket repository, dedicated page for each package (dolfin, mshr). Dolfin folder has PDE demos, mshr mesh demos etc.	

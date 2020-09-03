@@ -1,4 +1,4 @@
-Name,Right_Ascension,Declination,Magnitude,Type,Size(angle),Size(kly),Recession_Velocity,Other_Names
+Name,Right_Ascension,Declination,Magnitude,Type,Size(angle),Size(klyr),Recession_Velocity(km/s),Other_Names
 IC 755,12 01.2,+14 06,14.8,SBb,2.1,30,1839
 NGC 4037,12 01.4,+13 24,13.1,SBb,2.3,35,1265
 NGC 4064,12 04.2,+18 27,12.3,SBa,4.0,60,1252

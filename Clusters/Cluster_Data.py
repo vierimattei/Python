@@ -1,15 +1,24 @@
 #Taking the information on the Virgo Cluster galaxies. The data comes from 
 #http://www.atlasoftheuniverse.com/galgrps/vir.html
 
+#importing numpy to work with arrays etc
+import numpy as np
+
 #Importing pandas for data acquisition/manipulation
 import pandas as pd
 
 #Importing re to use regular expressions
 import re
 
-#Importing astropy to use constants and coordinates, and units to do conversions
+#Importing astropy to use constants and coordinates, units to do conversions,
+#WMAP cause we need the Hubble constant, SkyCoord to convert to cartesian
 from astropy import constants as const
-from astropy import units
+from astropy import units as u
+from astropy.cosmology import WMAP9 as cosmo
+from astropy.coordinates import SkyCoord
+
+#importing functions I made that are in this directory
+import my_functions as myfun
 
 #defining an empty list galaxy[] to contain each line of our file
 galaxies = []
@@ -72,7 +81,7 @@ for row in galaxies:
 #Notifying whether lists have same length (which has to be the case for them to
 #be correct))
 if len(galaxies) == len(galaxies_csv):
-    print('Lists have same length, comversion should be OK')
+    print('Lists have same length, conversion should be OK')
 else:
     print('Lists have different length, error in conversion')
 
@@ -81,11 +90,10 @@ else:
 del galaxies_csv[0]
 del galaxies_csv[1:3]
 
-#Re-formatting the 1st line with correct names for each of the 0 fields
-galaxies_csv[0] = 'Name,Right_Ascension,Declination,Magnitude,Type,Size(angle),Size(kly),Recession_Velocity,Other_Names'
-          
-
-#Renaming the 1st 
+#Re-formatting the 1st line with correct names for each of the 0 fields, with
+#unit names matching those in astropy
+galaxies_csv[0] = 'Name,Right_Ascension,Declination,Magnitude,Type,Size(angle),\
+Size(klyr),Recession_Velocity(km/s),Other_Names'
 
 with open('data.csv', 'w') as data_csv:
     for row in galaxies_csv:
@@ -97,4 +105,15 @@ galaxies_frame = pd.read_csv('data.csv')
 #Removing redundant series (columns) from the data frame: the size in arcminutes,
 #the Other_Names and the type field and putting into a new frame
 galaxies_info = galaxies_frame.drop(['Size(angle)','Other_Names','Type'], axis=1)
-galaxies_info['Recession_Velocity'] = galaxies_info['Recession_Velocity']*u.
+
+#Changing the unit of the dataframe using my functions with astropy, then 
+#renaming the columns of the data frame to reflect the change in unit
+galaxies_info['Size(klyr)'], size_unit = myfun.convert_unit(galaxies_frame['Size(klyr)'],u.klyr,u.kpc)
+myfun.update_series_name(galaxies_info,'Size(klyr)', size_unit)
+
+#converting recession velocity to distance using astropy
+galaxies_info['Recession_Velocity(km/s)'], dist_unit = myfun.convert_vel_dist(galaxies_info['Recession_Velocity(km/s)'],u.km, u.s)
+dist_name = 'Distance'+'('+dist_unit +')'
+galaxies_info.rename(columns={'Recession_Velocity(km/s)':dist_name}, inplace=True)
+
+
