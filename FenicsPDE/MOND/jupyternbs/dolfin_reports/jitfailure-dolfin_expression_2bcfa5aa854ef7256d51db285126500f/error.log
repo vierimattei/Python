@@ -1,0 +1,22 @@
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp: In member function ‘virtual void dolfin::dolfin_expression_2bcfa5aa854ef7256d51db285126500f::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp:74:23: error: ‘a0’ was not declared in this scope
+           values[0] = a0*4*pi*mgbeps/pi*1/(pow(x[0],2) + pow(x[1],2) + pow(x[2],2) + pow(eps,2));
+                       ^~
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp:74:23: note: suggested alternative: ‘a’
+           values[0] = a0*4*pi*mgbeps/pi*1/(pow(x[0],2) + pow(x[1],2) + pow(x[2],2) + pow(eps,2));
+                       ^~
+                       a
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp:74:31: error: ‘mgbeps’ was not declared in this scope
+           values[0] = a0*4*pi*mgbeps/pi*1/(pow(x[0],2) + pow(x[1],2) + pow(x[2],2) + pow(eps,2));
+                               ^~~~~~
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp:74:31: note: suggested alternative: ‘mgb’
+           values[0] = a0*4*pi*mgbeps/pi*1/(pow(x[0],2) + pow(x[1],2) + pow(x[2],2) + pow(eps,2));
+                               ^~~~~~
+                               mgb
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp: In member function ‘virtual double dolfin::dolfin_expression_2bcfa5aa854ef7256d51db285126500f::get_property(std::__cxx11::string) const’:
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp:86:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "radius_close") return radius_close;          if (name == "eps") return eps;
+           ^~
+/tmp/tmp9_xrgh6f/dolfin_expression_2bcfa5aa854ef7256d51db285126500f.cpp:86:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "radius_close") return radius_close;          if (name == "eps") return eps;
+                                               ^~

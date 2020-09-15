@@ -1,0 +1,29 @@
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp: In member function ‘virtual void dolfin::dolfin_expression_654376c1cf1edeb470b6bce7488e236d::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:72:33: error: ‘eps’ was not declared in this scope
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) &&y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                 ^~~
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:72:36: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) &&y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                    ^
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:72:62: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) &&y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                              ^
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:72:79: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) &&y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                               ^
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:72:105: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) &&y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                                                         ^
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:72:123: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) &&y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                                                                           ^
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:72:149: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) &&y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                                                                                                     ^
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp: In member function ‘virtual double dolfin::dolfin_expression_654376c1cf1edeb470b6bce7488e236d::get_property(std::__cxx11::string) const’:
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:84:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;
+           ^~
+/tmp/tmpdsvfob4u/dolfin_expression_654376c1cf1edeb470b6bce7488e236d.cpp:84:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;
+                                               ^~

@@ -1,0 +1,15 @@
+/tmp/tmpcv3rjhhq/dolfin_expression_a9f559d5a803fd224e8c7d041f37918b.cpp: In member function ‘virtual void dolfin::dolfin_expression_a9f559d5a803fd224e8c7d041f37918b::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpcv3rjhhq/dolfin_expression_a9f559d5a803fd224e8c7d041f37918b.cpp:75:23: error: ‘a’ was not declared in this scope
+           values[0] = a*4*pi*G*1/pow((sigma*sqrt(2*pi)),3)*exp(-1/2*(pow(x[0],2) + pow(x[1],2)+ pow(x[2],2))/pow(sigma,2));
+                       ^
+/tmp/tmpcv3rjhhq/dolfin_expression_a9f559d5a803fd224e8c7d041f37918b.cpp:75:23: note: suggested alternative: ‘a0’
+           values[0] = a*4*pi*G*1/pow((sigma*sqrt(2*pi)),3)*exp(-1/2*(pow(x[0],2) + pow(x[1],2)+ pow(x[2],2))/pow(sigma,2));
+                       ^
+                       a0
+/tmp/tmpcv3rjhhq/dolfin_expression_a9f559d5a803fd224e8c7d041f37918b.cpp: In member function ‘virtual double dolfin::dolfin_expression_a9f559d5a803fd224e8c7d041f37918b::get_property(std::__cxx11::string) const’:
+/tmp/tmpcv3rjhhq/dolfin_expression_a9f559d5a803fd224e8c7d041f37918b.cpp:87:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a0") return a0;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "radius_close") return radius_close;          if (name == "eps") return eps;          if (name == "sigma") return sigma;
+           ^~
+/tmp/tmpcv3rjhhq/dolfin_expression_a9f559d5a803fd224e8c7d041f37918b.cpp:87:49: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a0") return a0;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "radius_close") return radius_close;          if (name == "eps") return eps;          if (name == "sigma") return sigma;
+                                                 ^~

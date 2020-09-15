@@ -1,0 +1,10 @@
+/tmp/tmpn8dli7k6/dolfin_expression_9ab4603767eea378d9b6e2317984dbb2.cpp: In member function ‘virtual void dolfin::dolfin_expression_9ab4603767eea378d9b6e2317984dbb2::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpn8dli7k6/dolfin_expression_9ab4603767eea378d9b6e2317984dbb2.cpp:61:86: error: too few arguments to function ‘void dolfin::log(int, std::__cxx11::string, ...)’
+           values[0] = 17003543250.7463*log(pow(x[0], 2) + pow(x[1], 2) + pow(x[2], 2));
+                                                                                      ^
+In file included from /usr/local/include/dolfin/common/Array.h:32:0,
+                 from /usr/local/include/dolfin/function/Expression.h:27,
+                 from /tmp/tmpn8dli7k6/dolfin_expression_9ab4603767eea378d9b6e2317984dbb2.cpp:13:
+/usr/local/include/dolfin/log/log.h:103:8: note: declared here
+   void log(int debug_level, std::string msg, ...);
+        ^~~

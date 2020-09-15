@@ -1,0 +1,11 @@
+/tmp/tmpclldd9a5/dolfin_expression_6c51c4d34c03e39ab5963eb9bded5e8b.cpp: In member function ‘virtual void dolfin::dolfin_expression_6c51c4d34c03e39ab5963eb9bded5e8b::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpclldd9a5/dolfin_expression_6c51c4d34c03e39ab5963eb9bded5e8b.cpp:69:80: error: expected ‘)’ before ‘;’ token
+           values[0] = sqrt(G*mgb*a)*1/2*log(pow(x[0],2)+pow(x[1],2)+pow(x[2],2);
+                                                                                ^
+/tmp/tmpclldd9a5/dolfin_expression_6c51c4d34c03e39ab5963eb9bded5e8b.cpp: In member function ‘virtual double dolfin::dolfin_expression_6c51c4d34c03e39ab5963eb9bded5e8b::get_property(std::__cxx11::string) const’:
+/tmp/tmpclldd9a5/dolfin_expression_6c51c4d34c03e39ab5963eb9bded5e8b.cpp:81:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;
+           ^~
+/tmp/tmpclldd9a5/dolfin_expression_6c51c4d34c03e39ab5963eb9bded5e8b.cpp:81:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;
+                                               ^~

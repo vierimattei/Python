@@ -1,2 +1,5 @@
 https://fenicsproject.org/docs/dolfin/	-				A list of all official documentation of dolfin per version
 https://bitbucket.org/fenics-project/workspace/projects/CORE		Bitbucket repository, dedicated page for each package (dolfin, mshr). Dolfin folder has PDE demos, mshr mesh demos etc.	
+https://vtkplotter.embl.es/content/vedo/dolfin.html			Tutorial for the vedo library to plot dolfin outputs
+https://fenicsproject.org/docs/dolfin/latest/python/ChangeLog.html	Changelog for all the difference in different dolfin versions
+https://fenicsproject.org/pub/course/lectures/2017-nordic-phdcourse/lecture_20_tools_for_visualisation.pdf	Tutorial on Plotting and Using ParaView with Fenics

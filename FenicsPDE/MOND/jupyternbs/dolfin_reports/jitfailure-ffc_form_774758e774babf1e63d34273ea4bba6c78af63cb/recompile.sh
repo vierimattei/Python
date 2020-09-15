@@ -1,0 +1,3 @@
+#!/bin/bash
+# Execute this file to recompile locally
+c++ -Wall -shared -fPIC -std=c++11 -O2 -I/usr/local/lib/python3.6/dist-packages/ffc/backends/ufc -I/usr/local/include -I/usr/local/slepc-32/include -I/usr/local/petsc-32/include -I/usr/include/mpich -I/usr/include/hdf5/mpich -I/usr/include/eigen3 -I/home/guest/vieri/.cache/dijitso/include ffc_form_774758e774babf1e63d34273ea4bba6c78af63cb.cpp -L/home/guest/vieri/.cache/dijitso/lib -Wl,-rpath,/home/guest/vieri/.cache/dijitso/lib -ldijitso-ffc_element_b74a341781981c01e1612b1ea026f3d127aa2d4e -ldijitso-ffc_element_cb3d7e966cb74d8c7ab56a87f86c179616a111bc -ldijitso-ffc_coordinate_mapping_5c983050994b413442e634597bb8a5b0f7e5064f -olibdijitso-ffc_form_774758e774babf1e63d34273ea4bba6c78af63cb.so

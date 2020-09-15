@@ -1,0 +1,26 @@
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp: In member function ‘virtual void dolfin::dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:73:36: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) && y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                    ^
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:73:62: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) && y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                              ^
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:73:80: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) && y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                                ^
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:73:106: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) && y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                                                          ^
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:73:124: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) && y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                                                                            ^
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:73:150: error: expression cannot be used as a function
+           values[0] = x_close(1-eps) <= x[0] <= x_close(1+eps) && y_close(1-eps) <= x[1] <= y_close(1+eps) && z_close(1-eps) <= x[2] <= z_close(1+eps) ? a*4*pi*G*mgb : 0;
+                                                                                                                                                      ^
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp: In member function ‘virtual double dolfin::dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20::get_property(std::__cxx11::string) const’:
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:85:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "eps") return eps;
+           ^~
+/tmp/tmpwrg8bqx3/dolfin_expression_b6267ee3d9bcc83a84daee68fd15ed20.cpp:85:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "eps") return eps;
+                                               ^~

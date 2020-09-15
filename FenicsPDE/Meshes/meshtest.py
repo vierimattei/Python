@@ -38,9 +38,9 @@ sub_num = 10
 #angles equally spaced apart
 angles_N = [i*2*pi/sub_num for i in range(sub_num)]
 
-#centers are now around
-sub_center_x = [cos(angle) for angle in angles_N]
-sub_center_y = [sin(angle) for angle in angles_N]
+#centers are now around a circle of radius 5
+sub_center_x = 5*[cos(angle) for angle in angles_N]
+sub_center_y = 5*[sin(angle) for angle in angles_N]
 
 #grouping x and y coordinates to feed to Circle
 sub_coords = np.vstack((sub_center_x, sub_center_y))

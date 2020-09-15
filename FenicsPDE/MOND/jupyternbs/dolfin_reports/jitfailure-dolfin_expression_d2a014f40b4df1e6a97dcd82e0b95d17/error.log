@@ -1,0 +1,29 @@
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp: In member function ‘virtual void dolfin::dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:73:38: error: expression cannot be used as a function
+           values[0] = ((x_close(1-eps) <= x[0] <= x_close(1+eps)) && (y_close(1-eps) <= x[1] <= y_close(1+eps)) && (z_close(1-eps) <= x[2] <= z_close(1+eps)) ? a*4*pi*G*mgb : 0;
+                                      ^
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:73:64: error: expression cannot be used as a function
+           values[0] = ((x_close(1-eps) <= x[0] <= x_close(1+eps)) && (y_close(1-eps) <= x[1] <= y_close(1+eps)) && (z_close(1-eps) <= x[2] <= z_close(1+eps)) ? a*4*pi*G*mgb : 0;
+                                                                ^
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:73:84: error: expression cannot be used as a function
+           values[0] = ((x_close(1-eps) <= x[0] <= x_close(1+eps)) && (y_close(1-eps) <= x[1] <= y_close(1+eps)) && (z_close(1-eps) <= x[2] <= z_close(1+eps)) ? a*4*pi*G*mgb : 0;
+                                                                                    ^
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:73:110: error: expression cannot be used as a function
+           values[0] = ((x_close(1-eps) <= x[0] <= x_close(1+eps)) && (y_close(1-eps) <= x[1] <= y_close(1+eps)) && (z_close(1-eps) <= x[2] <= z_close(1+eps)) ? a*4*pi*G*mgb : 0;
+                                                                                                              ^
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:73:130: error: expression cannot be used as a function
+           values[0] = ((x_close(1-eps) <= x[0] <= x_close(1+eps)) && (y_close(1-eps) <= x[1] <= y_close(1+eps)) && (z_close(1-eps) <= x[2] <= z_close(1+eps)) ? a*4*pi*G*mgb : 0;
+                                                                                                                                  ^
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:73:156: error: expression cannot be used as a function
+           values[0] = ((x_close(1-eps) <= x[0] <= x_close(1+eps)) && (y_close(1-eps) <= x[1] <= y_close(1+eps)) && (z_close(1-eps) <= x[2] <= z_close(1+eps)) ? a*4*pi*G*mgb : 0;
+                                                                                                                                                            ^
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:73:177: error: expected ‘)’ before ‘;’ token
+           values[0] = ((x_close(1-eps) <= x[0] <= x_close(1+eps)) && (y_close(1-eps) <= x[1] <= y_close(1+eps)) && (z_close(1-eps) <= x[2] <= z_close(1+eps)) ? a*4*pi*G*mgb : 0;
+                                                                                                                                                                                 ^
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp: In member function ‘virtual double dolfin::dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17::get_property(std::__cxx11::string) const’:
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:85:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "eps") return eps;
+           ^~
+/tmp/tmpws026_1v/dolfin_expression_d2a014f40b4df1e6a97dcd82e0b95d17.cpp:85:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a") return a;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "eps") return eps;
+                                               ^~

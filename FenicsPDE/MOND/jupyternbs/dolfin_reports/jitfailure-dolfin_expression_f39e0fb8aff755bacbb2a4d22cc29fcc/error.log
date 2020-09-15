@@ -1,0 +1,15 @@
+/tmp/tmpe2lb28rw/dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc.cpp: In member function ‘virtual void dolfin::dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpe2lb28rw/dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc.cpp:66:94: error: ‘mgb’ was not declared in this scope
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2))>=pow(radius_tot, 2) ? 4*pi*G*mgb/volume_out : 0;
+                                                                                              ^~~
+/tmp/tmpe2lb28rw/dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc.cpp:66:94: note: suggested alternative: ‘logb’
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2))>=pow(radius_tot, 2) ? 4*pi*G*mgb/volume_out : 0;
+                                                                                              ^~~
+                                                                                              logb
+/tmp/tmpe2lb28rw/dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc.cpp: In member function ‘virtual double dolfin::dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc::get_property(std::__cxx11::string) const’:
+/tmp/tmpe2lb28rw/dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc.cpp:78:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;
+           ^~
+/tmp/tmpe2lb28rw/dolfin_expression_f39e0fb8aff755bacbb2a4d22cc29fcc.cpp:78:47: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;
+                                               ^~

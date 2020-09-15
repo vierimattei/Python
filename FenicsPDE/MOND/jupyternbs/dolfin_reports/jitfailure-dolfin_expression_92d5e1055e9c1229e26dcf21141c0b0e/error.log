@@ -1,0 +1,18 @@
+/tmp/tmpou0p6a9n/dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e.cpp: In member function ‘virtual void dolfin::dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpou0p6a9n/dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e.cpp:65:92: error: ‘G’ was not declared in this scope
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2))>=pow(radius_tot, 2) ? 4*pi*G*mgb/volume_out : 0;
+                                                                                            ^
+/tmp/tmpou0p6a9n/dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e.cpp:65:94: error: ‘mgb’ was not declared in this scope
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2))>=pow(radius_tot, 2) ? 4*pi*G*mgb/volume_out : 0;
+                                                                                              ^~~
+/tmp/tmpou0p6a9n/dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e.cpp:65:94: note: suggested alternative: ‘logb’
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2))>=pow(radius_tot, 2) ? 4*pi*G*mgb/volume_out : 0;
+                                                                                              ^~~
+                                                                                              logb
+/tmp/tmpou0p6a9n/dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e.cpp: In member function ‘virtual double dolfin::dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e::get_property(std::__cxx11::string) const’:
+/tmp/tmpou0p6a9n/dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e.cpp:77:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;
+           ^~
+/tmp/tmpou0p6a9n/dolfin_expression_92d5e1055e9c1229e26dcf21141c0b0e.cpp:77:49: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;
+                                                 ^~

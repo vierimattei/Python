@@ -1,0 +1,17 @@
+/tmp/tmpb_faendf/dolfin_expression_b512e50396c238efd4bc25ff26746699.cpp: In member function ‘virtual void dolfin::dolfin_expression_b512e50396c238efd4bc25ff26746699::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpb_faendf/dolfin_expression_b512e50396c238efd4bc25ff26746699.cpp:61:71: error: ‘radius_tot’ was not declared in this scope
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2)) - pow(radius_tot, 2)>=0 ? 4*pi*G*mgb/volume_out : 0;
+                                                                       ^~~~~~~~~~
+/tmp/tmpb_faendf/dolfin_expression_b512e50396c238efd4bc25ff26746699.cpp:61:96: error: ‘G’ was not declared in this scope
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2)) - pow(radius_tot, 2)>=0 ? 4*pi*G*mgb/volume_out : 0;
+                                                                                                ^
+/tmp/tmpb_faendf/dolfin_expression_b512e50396c238efd4bc25ff26746699.cpp:61:98: error: ‘mgb’ was not declared in this scope
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2)) - pow(radius_tot, 2)>=0 ? 4*pi*G*mgb/volume_out : 0;
+                                                                                                  ^~~
+/tmp/tmpb_faendf/dolfin_expression_b512e50396c238efd4bc25ff26746699.cpp:61:98: note: suggested alternative: ‘logb’
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2)) - pow(radius_tot, 2)>=0 ? 4*pi*G*mgb/volume_out : 0;
+                                                                                                  ^~~
+                                                                                                  logb
+/tmp/tmpb_faendf/dolfin_expression_b512e50396c238efd4bc25ff26746699.cpp:61:102: error: ‘volume_out’ was not declared in this scope
+           values[0] = (pow(x[0],2) + pow(x[1],2) + pow(x[2],2)) - pow(radius_tot, 2)>=0 ? 4*pi*G*mgb/volume_out : 0;
+                                                                                                      ^~~~~~~~~~

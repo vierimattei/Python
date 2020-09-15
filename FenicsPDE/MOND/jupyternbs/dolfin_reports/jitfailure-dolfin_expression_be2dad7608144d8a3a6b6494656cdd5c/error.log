@@ -1,0 +1,118 @@
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp: In member function ‘virtual void dolfin::dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: error: no matching function for call to ‘pow(__gnu_cxx::__promote_2<double, int, double, double>::__type)’
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/features.h:424:0,
+                 from /usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h:39,
+                 from /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h:533,
+                 from /usr/include/c++/7/bits/stl_algobase.h:59,
+                 from /usr/include/c++/7/vector:60,
+                 from /usr/local/include/dolfin/function/Expression.h:24,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/x86_64-linux-gnu/bits/math-finite.h:156:1: note: candidate: double pow(double, double)
+ __MATH_REDIRCALL (pow, , (_Mdouble_, _Mdouble_));
+ ^
+/usr/include/x86_64-linux-gnu/bits/math-finite.h:156:1: note:   candidate expects 2 arguments, 1 provided
+In file included from /usr/local/lib/python3.6/dist-packages/ffc/backends/ufc/ufc_geometry.h:9:0,
+                 from /usr/local/lib/python3.6/dist-packages/ffc/backends/ufc/ufc.h:22,
+                 from /usr/local/include/dolfin/function/Expression.h:25,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/cmath:388:3: note: candidate: constexpr float std::pow(float, float)
+   pow(float __x, float __y)
+   ^~~
+/usr/include/c++/7/cmath:388:3: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/cmath:392:3: note: candidate: constexpr long double std::pow(long double, long double)
+   pow(long double __x, long double __y)
+   ^~~
+/usr/include/c++/7/cmath:392:3: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/cmath:415:5: note: candidate: template<class _Tp, class _Up> constexpr typename __gnu_cxx::__promote_2<_Tp, _Up>::__type std::pow(_Tp, _Up)
+     pow(_Tp __x, _Up __y)
+     ^~~
+/usr/include/c++/7/cmath:415:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   candidate expects 2 arguments, 1 provided
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/eigen3/Eigen/Core:80:0,
+                 from /usr/include/eigen3/Eigen/Dense:1,
+                 from /usr/local/include/dolfin/function/Expression.h:26,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/complex:989:5: note: candidate: template<class _Tp> std::complex<_Tp> std::pow(const std::complex<_Tp>&, int)
+     pow(const complex<_Tp>& __z, int __n)
+     ^~~
+/usr/include/c++/7/complex:989:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   mismatched types ‘const std::complex<_Tp>’ and ‘__gnu_cxx::__promote_2<double, int, double, double>::__type {aka double}’
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/eigen3/Eigen/Core:80:0,
+                 from /usr/include/eigen3/Eigen/Dense:1,
+                 from /usr/local/include/dolfin/function/Expression.h:26,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/complex:998:5: note: candidate: template<class _Tp> std::complex<_Tp> std::pow(const std::complex<_Tp>&, const _Tp&)
+     pow(const complex<_Tp>& __x, const _Tp& __y)
+     ^~~
+/usr/include/c++/7/complex:998:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   mismatched types ‘const std::complex<_Tp>’ and ‘__gnu_cxx::__promote_2<double, int, double, double>::__type {aka double}’
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/eigen3/Eigen/Core:80:0,
+                 from /usr/include/eigen3/Eigen/Dense:1,
+                 from /usr/local/include/dolfin/function/Expression.h:26,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/complex:1032:5: note: candidate: template<class _Tp> std::complex<_Tp> std::pow(const std::complex<_Tp>&, const std::complex<_Tp>&)
+     pow(const complex<_Tp>& __x, const complex<_Tp>& __y)
+     ^~~
+/usr/include/c++/7/complex:1032:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   mismatched types ‘const std::complex<_Tp>’ and ‘__gnu_cxx::__promote_2<double, int, double, double>::__type {aka double}’
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/eigen3/Eigen/Core:80:0,
+                 from /usr/include/eigen3/Eigen/Dense:1,
+                 from /usr/local/include/dolfin/function/Expression.h:26,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/complex:1043:5: note: candidate: template<class _Tp> std::complex<_Tp> std::pow(const _Tp&, const std::complex<_Tp>&)
+     pow(const _Tp& __x, const complex<_Tp>& __y)
+     ^~~
+/usr/include/c++/7/complex:1043:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   candidate expects 2 arguments, 1 provided
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/eigen3/Eigen/Core:80:0,
+                 from /usr/include/eigen3/Eigen/Dense:1,
+                 from /usr/local/include/dolfin/function/Expression.h:26,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/complex:1864:5: note: candidate: template<class _Tp, class _Up> std::complex<typename __gnu_cxx::__promote_2<_Tp, _Up>::__type> std::pow(const std::complex<_Tp>&, const _Up&)
+     pow(const std::complex<_Tp>& __x, const _Up& __y)
+     ^~~
+/usr/include/c++/7/complex:1864:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   mismatched types ‘const std::complex<_Tp>’ and ‘__gnu_cxx::__promote_2<double, int, double, double>::__type {aka double}’
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/eigen3/Eigen/Core:80:0,
+                 from /usr/include/eigen3/Eigen/Dense:1,
+                 from /usr/local/include/dolfin/function/Expression.h:26,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/complex:1872:5: note: candidate: template<class _Tp, class _Up> std::complex<typename __gnu_cxx::__promote_2<_Tp, _Up>::__type> std::pow(const _Tp&, const std::complex<_Up>&)
+     pow(const _Tp& __x, const std::complex<_Up>& __y)
+     ^~~
+/usr/include/c++/7/complex:1872:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   candidate expects 2 arguments, 1 provided
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+In file included from /usr/include/eigen3/Eigen/Core:80:0,
+                 from /usr/include/eigen3/Eigen/Dense:1,
+                 from /usr/local/include/dolfin/function/Expression.h:26,
+                 from /tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:13:
+/usr/include/c++/7/complex:1880:5: note: candidate: template<class _Tp, class _Up> std::complex<typename __gnu_cxx::__promote_2<_Tp, _Up>::__type> std::pow(const std::complex<_Tp>&, const std::complex<_Up>&)
+     pow(const std::complex<_Tp>& __x, const std::complex<_Up>& __y)
+     ^~~
+/usr/include/c++/7/complex:1880:5: note:   template argument deduction/substitution failed:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:75:131: note:   mismatched types ‘const std::complex<_Tp>’ and ‘__gnu_cxx::__promote_2<double, int, double, double>::__type {aka double}’
+           values[0] = a0*4*pi*G*mgb/pow((marmar*sqrt(2*pi)),3)*pow(-(1/2)*((pow(x[1],2) + pow(x[1],2)+ pow(x[1],2))/pow(marmar,2)));
+                                                                                                                                   ^
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp: In member function ‘virtual double dolfin::dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c::get_property(std::__cxx11::string) const’:
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:87:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a0") return a0;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "radius_close") return radius_close;          if (name == "eps") return eps;          if (name == "marmar") return marmar;
+           ^~
+/tmp/tmpvul3yv5x/dolfin_expression_be2dad7608144d8a3a6b6494656cdd5c.cpp:87:49: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a0") return a0;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "x_close") return x_close;          if (name == "y_close") return y_close;          if (name == "z_close") return z_close;          if (name == "radius_close") return radius_close;          if (name == "eps") return eps;          if (name == "marmar") return marmar;
+                                                 ^~
