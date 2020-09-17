@@ -1,0 +1,29 @@
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp: In member function ‘virtual void dolfin::dolfin_expression_63766210190b8e313e74b927f685576f::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:76:36: error: ‘position_x’ was not declared in this scope
+           values[0] = (((pow((x[0]-position_x[0]),2)+pow((x[1]-position_y[0]),2)+pow((x[2]-position_z[0]),2)) <=pow(radius_tot, 2)))? a0*4*pi*G*source_mass/volume_out : 0;
+                                    ^~~~~~~~~~
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:76:36: note: suggested alternative: ‘position_x0’
+           values[0] = (((pow((x[0]-position_x[0]),2)+pow((x[1]-position_y[0]),2)+pow((x[2]-position_z[0]),2)) <=pow(radius_tot, 2)))? a0*4*pi*G*source_mass/volume_out : 0;
+                                    ^~~~~~~~~~
+                                    position_x0
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:76:64: error: ‘position_y’ was not declared in this scope
+           values[0] = (((pow((x[0]-position_x[0]),2)+pow((x[1]-position_y[0]),2)+pow((x[2]-position_z[0]),2)) <=pow(radius_tot, 2)))? a0*4*pi*G*source_mass/volume_out : 0;
+                                                                ^~~~~~~~~~
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:76:64: note: suggested alternative: ‘position_y0’
+           values[0] = (((pow((x[0]-position_x[0]),2)+pow((x[1]-position_y[0]),2)+pow((x[2]-position_z[0]),2)) <=pow(radius_tot, 2)))? a0*4*pi*G*source_mass/volume_out : 0;
+                                                                ^~~~~~~~~~
+                                                                position_y0
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:76:92: error: ‘position_z’ was not declared in this scope
+           values[0] = (((pow((x[0]-position_x[0]),2)+pow((x[1]-position_y[0]),2)+pow((x[2]-position_z[0]),2)) <=pow(radius_tot, 2)))? a0*4*pi*G*source_mass/volume_out : 0;
+                                                                                            ^~~~~~~~~~
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:76:92: note: suggested alternative: ‘position_z0’
+           values[0] = (((pow((x[0]-position_x[0]),2)+pow((x[1]-position_y[0]),2)+pow((x[2]-position_z[0]),2)) <=pow(radius_tot, 2)))? a0*4*pi*G*source_mass/volume_out : 0;
+                                                                                            ^~~~~~~~~~
+                                                                                            position_z0
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp: In member function ‘virtual double dolfin::dolfin_expression_63766210190b8e313e74b927f685576f::get_property(std::__cxx11::string) const’:
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:88:11: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+           if (name == "a0") return a0;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "stand_dev") return stand_dev;          if (name == "p") return p;          if (name == "position_x0") return position_x0;          if (name == "position_y0") return position_y0;          if (name == "position_z0") return position_z0;          if (name == "source_number") return source_number;          if (name == "source_mass") return source_mass;
+           ^~
+/tmp/tmpxnr4j7lg/dolfin_expression_63766210190b8e313e74b927f685576f.cpp:88:49: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+           if (name == "a0") return a0;          if (name == "ms") return ms;          if (name == "mgb") return mgb;          if (name == "G") return G;          if (name == "ly") return ly;          if (name == "kp") return kp;          if (name == "radius_tot") return radius_tot;          if (name == "volume_out") return volume_out;          if (name == "stand_dev") return stand_dev;          if (name == "p") return p;          if (name == "position_x0") return position_x0;          if (name == "position_y0") return position_y0;          if (name == "position_z0") return position_z0;          if (name == "source_number") return source_number;          if (name == "source_mass") return source_mass;
+                                                 ^~
