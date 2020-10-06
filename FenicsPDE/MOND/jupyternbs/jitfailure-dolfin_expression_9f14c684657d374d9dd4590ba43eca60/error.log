@@ -1,0 +1,34 @@
+/tmp/tmph0iiig8e/dolfin_expression_9f14c684657d374d9dd4590ba43eca60.cpp: In member function ‘virtual void dolfin::dolfin_expression_9f14c684657d374d9dd4590ba43eca60::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmph0iiig8e/dolfin_expression_9f14c684657d374d9dd4590ba43eca60.cpp:61:38: error: no matching function for call to ‘atan2(Eigen::DenseCoeffsBase<Eigen::Ref<const Eigen::Matrix<double, -1, 1> >, 0>::CoeffReturnType)’
+           values[0] = atan2(x[1]/x[0]);
+                                      ^
+In file included from /usr/include/features.h:424:0,
+                 from /usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h:39,
+                 from /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h:533,
+                 from /usr/include/c++/7/bits/stl_algobase.h:59,
+                 from /usr/include/c++/7/vector:60,
+                 from /usr/local/include/dolfin/function/Expression.h:24,
+                 from /tmp/tmph0iiig8e/dolfin_expression_9f14c684657d374d9dd4590ba43eca60.cpp:13:
+/usr/include/x86_64-linux-gnu/bits/math-finite.h:57:1: note: candidate: double atan2(double, double)
+ __MATH_REDIRCALL (atan2, , (_Mdouble_, _Mdouble_));
+ ^
+/usr/include/x86_64-linux-gnu/bits/math-finite.h:57:1: note:   candidate expects 2 arguments, 1 provided
+In file included from /usr/local/lib/python3.6/dist-packages/ffc/backends/ufc/ufc_geometry.h:9:0,
+                 from /usr/local/lib/python3.6/dist-packages/ffc/backends/ufc/ufc.h:22,
+                 from /usr/local/include/dolfin/function/Expression.h:25,
+                 from /tmp/tmph0iiig8e/dolfin_expression_9f14c684657d374d9dd4590ba43eca60.cpp:13:
+/usr/include/c++/7/cmath:144:3: note: candidate: constexpr float std::atan2(float, float)
+   atan2(float __y, float __x)
+   ^~~~~
+/usr/include/c++/7/cmath:144:3: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/cmath:148:3: note: candidate: constexpr long double std::atan2(long double, long double)
+   atan2(long double __y, long double __x)
+   ^~~~~
+/usr/include/c++/7/cmath:148:3: note:   candidate expects 2 arguments, 1 provided
+/usr/include/c++/7/cmath:155:5: note: candidate: template<class _Tp, class _Up> constexpr typename __gnu_cxx::__promote_2<_Tp, _Up>::__type std::atan2(_Tp, _Up)
+     atan2(_Tp __y, _Up __x)
+     ^~~~~
+/usr/include/c++/7/cmath:155:5: note:   template argument deduction/substitution failed:
+/tmp/tmph0iiig8e/dolfin_expression_9f14c684657d374d9dd4590ba43eca60.cpp:61:38: note:   candidate expects 2 arguments, 1 provided
+           values[0] = atan2(x[1]/x[0]);
+                                      ^

@@ -1,0 +1,47 @@
+def more_modified_refinement (mesh, location, how_many):
+    '''Function to refine mesh locally, only refining cells containing one of the points described by the
+    n*3 array location, containing 3 coordinates per point (xyz). 
+    '''
+    
+    #Starting # cells before we refine, to compute growth factor
+    starting_cells = mesh.num_cells()
+    
+    #How_many gives the amount of time the mesh should be refined
+    if how_many > 0:
+    
+        for i in range(how_many):
+        
+            #Declaring Boolean Mesh Function to individuate cell containing point
+            contain_function = MeshFunction("bool", mesh, 3)
+
+            #Setting function to False everywhere
+            contain_function.set_all(False)
+            
+            #Initial number of cells before refinement
+            initial_cells = mesh.num_cells()
+                
+            #List comprehension containing the cell IDs for the cells containing a source
+            intersect_list = [intersect(mesh, source).intersected_cells() for source in source_centers]
+            
+            #Setting the cell function contain_function to true for each cell containing a source
+            for cell_index in intersect_list:
+                contain_function[cell_index[0]] = True
+            
+            #Refining the mesh only for cells that contain a source
+            mesh = refine(mesh, contain_function)    
+            
+            #Final # cells after refinement
+            final_cells = mesh.num_cells()
+            
+            partial_growth_factor = final_cells/initial_cells
+            
+            print(('Iteration {} of {}: The Cell number went from {} to {}, up by a factor {}\n'
+                  .format(i+1, how_many, initial_cells, final_cells, partial_growth_factor)))
+    
+        #ratio between # cells at beginning and end of refinement
+        total_growth_factor = final_cells/starting_cells
+
+        print('Cell number went up by a factor {}\n'.format(total_growth_factor))
+    
+    #returning the refined mesh
+    return mesh
