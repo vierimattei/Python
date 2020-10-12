@@ -1,0 +1,8 @@
+/tmp/tmpif000nqy/dolfin_expression_1f1e1d002979300afd751a109d8bad98.cpp: In member function ‘virtual void dolfin::dolfin_expression_1f1e1d002979300afd751a109d8bad98::eval(Eigen::Ref<Eigen::Matrix<double, -1, 1> >, Eigen::Ref<const Eigen::Matrix<double, -1, 1> >) const’:
+/tmp/tmpif000nqy/dolfin_expression_1f1e1d002979300afd751a109d8bad98.cpp:61:28: error: ‘a0’ was not declared in this scope
+           values[0] = x[0]+a0;
+                            ^~
+/tmp/tmpif000nqy/dolfin_expression_1f1e1d002979300afd751a109d8bad98.cpp:61:28: note: suggested alternative: ‘y0’
+           values[0] = x[0]+a0;
+                            ^~
+                            y0
