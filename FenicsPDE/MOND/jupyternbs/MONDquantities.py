@@ -34,7 +34,7 @@ mgb = mass_coma
 #Setting domain_size to the radius of the Virgo Cluster, 2.3 Mpc
 domain_size = radius_coma
 #Smallest size of a galaxy in Virgo has a radius = r_Virgo/250, so that's the resolution we need
-radius_tot = domain_size/5
+radius_tot = domain_size/250
 #Origin at (0,0,0) for the mesh
 origin = Point(0,0,0)
 radius_refine = radius_tot
@@ -56,14 +56,14 @@ beta = 6/sqrt(2+c_2)
 plot_resolution = mesh_resolution
 #Size of the mesh for plotting. Should be bigger than the normal one or some points might be outside its domain
 mesh_plot_size = domain_size*0.8
-refine_times = 6
+refine_times = 1
 p = 1*kp
 source_number = 1
 source_mass = mgb/source_number
 radius_population = domain_size/2
 #Degree of the functionspace we want to solve the PDE on
 #IMPORTANT: Optimal degree = 3, increasing it to 4 does not make the computation more accurate!
-degree_PDE = 3
+degree_PDE = 1
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again
@@ -83,7 +83,7 @@ central_mass = True
 #The operation is very expensive, so if it's not strictly necessary it's better to not do it at all
 acceleration_needed = False
 #Option to plot 3D graphs
-plot_3D_graphs = False
+plot_3D_graphs = True
 #Option to avoid printing redundant information from each core when running the code in parallel from
 #a python (.py) script obtained from the jupyter notebook.
-parallel_run = False
+# parallel_run = True

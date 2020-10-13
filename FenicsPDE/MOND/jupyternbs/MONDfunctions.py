@@ -29,10 +29,6 @@ from mpl_toolkits.mplot3d import Axes3D
 #calculating the jacobian for the lensing
 from decimal import *
 
-#Increasing the width of the notebook (visual difference only)
-from IPython.core.display import display, HTML
-display(HTML("<style>.container { width:100% !important; }</style>"))
-
 #Needed if want to use the adapt function for mesh refinement, see:
 #https://fenicsproject.org/qa/6719/using-adapt-on-a-meshfunction-looking-for-a-working-example/
 parameters["refinement_algorithm"] = "plaza_with_parent_facets"
@@ -40,6 +36,7 @@ parameters["refinement_algorithm"] = "plaza_with_parent_facets"
 
 from MONDquantities import *
 
+from MONDclasses import *
 
 # # Function to define the initial mesh
 
@@ -47,20 +44,11 @@ from MONDquantities import *
 
 def make_spherical_mesh(size, resolution):
 
-    mesh_generation_start = time.time()
-
-    print('Starting mesh generation...\n')
-
     #Defining the domain for the mesh using the Sphere function from mshr
     domain = mshr.Sphere(origin, size)
 
     #Meshing the sphere generated with resolution 10 (cells per dimension)
     initial_mesh = mshr.generate_mesh(domain, resolution)
-
-    mesh_generation_end = time.time()
-    mesh_generation_time = run_time(mesh_generation_end - mesh_generation_start, 'Mesh Generation')
-    section_times.append(mesh_generation_time)
-    print('Mesh generated in {} s \n'.format(mesh_generation_time.time))
     
     return initial_mesh
 
@@ -204,12 +192,15 @@ def more_modified_refinement (mesh, location, how_many):
             
             #Initial number of cells before refinement
             initial_cells = mesh.num_cells()
-                
+            
             #List comprehension containing the cell IDs for the cells containing a source
-            intersect_list = [intersect(mesh, source).intersected_cells() for source in location]
+            #The if statement make sure that the intersect_list is only populated for points
+            #that are inside the mesh. For parallel, where the mesh is split, this is necessary!
+            intersect_list = [intersect(mesh, source).intersected_cells() for source in location if mesh.bounding_box_tree().compute_first_entity_collision(source) < mesh.num_cells()]
             
             #Setting the cell function contain_function to true for each cell containing a source
             for cell_index in intersect_list:
+                
                 contain_function[cell_index[0]] = True
             
             #Refining the mesh only for cells that contain a source
@@ -457,7 +448,7 @@ def solve_PDE(the_BVP):
     print('Starting PDE Solver...\n')
 
     #defining the x,y,z coordinates from the coordinate array in sympy
-    x, y, z = sym.symbols('x[0], x[1], x[2]')
+#     x, y, z = sym.symbols('x[0], x[1], x[2]')
 
     #VERY IMPORTANT: If using sympy, use sym. in front of every mathematical operator, or the sym. and UFL (the
     #mathematical syntax used in fenics) collide and an error about UFL conversion appears
@@ -668,7 +659,7 @@ def sum_individual_contributions(mesh, origin, coordinates):
     
     return potential_off_center
 
-def radial_dist_hist(mesh, density, bins):
+def radial_dist_hist(r_coords, mesh, density, bins):
     
     #Having independent y axes so we don't need to adjust the function to compare the scaling 
     fig, histo = plt.subplots()
@@ -695,7 +686,7 @@ def radial_dist_hist(mesh, density, bins):
     quadratic.tick_params(axis='density', labelcolor=color)
     
     #plotting a cubic relation, scaled by the max element^3 to be of order unity
-    quadratic.plot(r_sorted, np.power(r_sorted,2), label = 'quadratic', color = color)
+    quadratic.plot(r_coords, np.power(r_coords,2), label = 'quadratic', color = color)
     
     #Forcing the lower limit in both plots to 0 so there's no offset
     plt.ylim(bottom=0)
@@ -704,13 +695,18 @@ def radial_dist_hist(mesh, density, bins):
     plt.legend()
     
    
-def plot_mesh(figure, vertex_fraction, color, show_mesh = False, alpha = 0.3):
+def plot_mesh(mesh, center_of_mass, degree, figure, vertex_fraction, color, show_mesh = False, alpha = 0.3):
     '''
     Plotting the first vertex_number/vertex_fraction points of the mesh, based on radial
     distance. Need to input a figure name of format figure = plt.figure() for the subplot
     to work. Through this, we can embed this plot into other plots. Adding optional mesh and
     alpha inputs.
     '''
+    
+    V, vertex_number, x_coords, y_coords, z_coords, r_coords, sorting_index, x_sorted, y_sorted, z_sorted, r_sorted = rearrange_mesh_data(mesh, center_of_mass, degree)
+
+    
+    vertex_number = mesh.num_vertices()
     
     #Getting the number of vertices required as an intege of the fraction given
     how_many = int(vertex_number/vertex_fraction)
@@ -731,11 +727,14 @@ def plot_mesh(figure, vertex_fraction, color, show_mesh = False, alpha = 0.3):
         pass
     
     
-def slice_mesh(amount, mesh, height = 0, portion = True, values = True, *args):
+def slice_mesh(amount, mesh, center_of_mass, degree, height = 0, portion = True, values = True, *args):
     '''Selecting only points of the mesh that are close to the xy plane. First, sorting points
     according to their z coordinate, then selecting either amount # of them or a portion of the
     total, dpeending on 'portion'. Optionally output a function args[0] at those points
     '''
+    
+    
+    V, vertex_number, x_coords, y_coords, z_coords, r_coords, sorting_index, x_sorted, y_sorted, z_sorted, r_sorted = rearrange_mesh_data(mesh, center_of_mass, degree)
     
     #Getting abs(z), distance from xy plane, and getting the index that sorts this new array
     xy_plane_distance = np.abs(z_coords - height)
@@ -774,7 +773,7 @@ def slice_mesh(amount, mesh, height = 0, portion = True, values = True, *args):
         return x_xy_plane, y_xy_plane, z_xy_plane, amount
 
     
-def plot_mesh_slice(amount, figure, source_coordinates, height = 0, portion = True, show_mesh = True, cross_section = False, alpha = 0.3, show_source = True):
+def plot_mesh_slice(amount, figure, mesh, center_of_mass, degree, source_coordinates, height = 0, portion = True, show_mesh = True, cross_section = False, alpha = 0.3, show_source = True):
     '''
     Plotting a slice of points on the mesh close to the xy axis, so for small z.
     Need to create a figure before calling the function. Optional showing mesh on top
@@ -782,11 +781,12 @@ def plot_mesh_slice(amount, figure, source_coordinates, height = 0, portion = Tr
     '''
     
     #Calling the slice_mesh function to slice the mesh before plotting
-    x_xy_plane, y_xy_plane, z_xy_plane, amount = (slice_mesh(amount, mesh, height = height,
-                                                             portion = portion, values = False))
+    x_xy_plane, y_xy_plane, z_xy_plane, amount = (slice_mesh(amount, mesh, center_of_mass, degree, height = height, portion = portion, values = False))
     
     #projection='3d' needed to specify a 3D scatter plot
     mesh_xy_axis = figure.add_subplot(111, projection='3d')
+    
+    vertex_number = mesh.num_vertices()
     
     #plotting the total/vertex_fraction closest vertices to the origin
     #s gives the size of the dots, multiplying it by vertex_fraction so when we have less dots
@@ -797,8 +797,8 @@ def plot_mesh_slice(amount, figure, source_coordinates, height = 0, portion = Tr
     #Plotting the source(s) on top of the mesh points, to check if we refine mesh correctly
     if show_source == True:
         
-        (mesh_xy_axis.scatter(random_coordinates[:,0],random_coordinates[:,1],
-        random_coordinates[:,2], marker = 'o', s=vertex_number/amount*5, c = 'r', label='Source'))
+        (mesh_xy_axis.scatter(source_coordinates[:,0],source_coordinates[:,1],
+        source_coordinates[:,2], marker = 'o', s=vertex_number/amount*5, c = 'r', label='Source'))
             
     
     #Projecting each point on the xy plane, at z=0 (zs=0)
@@ -818,7 +818,7 @@ def plot_mesh_slice(amount, figure, source_coordinates, height = 0, portion = Tr
         plt.scatter(x_xy_plane, y_xy_plane, c = z_xy_plane, marker = '+')
         
         if show_source:
-            (plt.scatter(random_coordinates[:,0],random_coordinates[:,1], marker = 'o',
+            (plt.scatter(source_coordinates[:,0],source_coordinates[:,1], marker = 'o',
             color = 'r', s=vertex_number/amount*5))
         
     else:
@@ -830,7 +830,7 @@ def plot_mesh_slice(amount, figure, source_coordinates, height = 0, portion = Tr
 # In[57]:
 
 
-def trisurf_function_slice(figure, function, amount, height, slices = 50, high_low = 'low', project = True):
+def trisurf_function_slice(figure, function, amount, height, mesh, center_of_mass, degree, slices = 50, high_low = 'low', project = True):
     '''Plot a trisurf along a plane (currently only the xy-plane) of a given function. The slice
     of points defining the xy plane is obtained from the slice_mesh function. Then, project
     the triangulated surface onto each axis if optional arg project = True. high_low determines
@@ -839,7 +839,7 @@ def trisurf_function_slice(figure, function, amount, height, slices = 50, high_l
     
     #Obtaining the x,y coordinates and functions to plot from slice_mesh
     x_xy_plane, y_xy_plane, z_xy_plane, function_xy_plane, amount = (slice_mesh(amount,
-                                            mesh, height, True, True, function))
+                              mesh, center_of_mass, degree,  height, True, True, function))
     
     #Adding a subplot to the figure input
     plane_trisurf = figure.add_subplot(111, projection='3d')
@@ -873,14 +873,14 @@ def trisurf_function_slice(figure, function, amount, height, slices = 50, high_l
 # In[61]:
 
 
-def tricontour_function_slice(figure, function, amount, levels, height):
+def tricontour_function_slice(figure, function, center_of_mass, amount, levels, height, mesh, degree):
     '''Plot a trisurf along a plane (currently only the xy-plane) of a given function. The slice
     of points defining the xy plane is obtained from the slice_mesh function
     '''
     
     #Obtaining the x,y coordinates and functions to plot from slice_mesh
     x_xy_plane, y_xy_plane, z_xy_plane, function_xy_plane, amount = (slice_mesh(amount,
-                                            mesh, height, True, True, function))
+                              mesh, center_of_mass, degree, height, True, True, function))
     
     #Adding a subplot to the figure input. Not adding the projection = 3d option so we have it 
     #all in one plane and can plot multiple for e.g. different values of z
@@ -936,109 +936,3 @@ def contour_3D_slices(figure, function, amount, height, slices = 50, high_low = 
         plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='z', offset=elevations[0],cmap = 'jet')
     #     plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='x', offset=y_bottom, cmap = 'jet')
     #     plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='y', offset=x_top, cmap = 'jet')
-
-    
-def compare_solutions(PDE_List, max_value, variable_name, samples, variable_title, title_units):
-    '''This function accepts a list of BVP object, containing weak form, source, initial guess
-    and name for a given BVP. Max value is the maximum value of a variable that is to be analysed,
-    and looped over, variable_name is its name, samples is the amount of values to be taken between
-    zero and max_value when looping over the variable, and variable_title is used to name subplots'''
-    
-    print(f'{variable_name} = {eval(variable_name)}')
-    
-    #Defining the amount of subplots needed from the samples input. We want samples/2 columns, and 2 rows
-    #For it to work for odd numbers, we add the remainder of 2 so it's always divisible, then convert
-    #to integer
-    subplot_layout = (int((samples+samples%2)/2),2)
-    
-    #If we have only one sample, we make a plot with no subplots.
-    if samples == 1:
-    
-        fig, potential_compare = (plt.subplots(sharex=True,sharey=True))
-    
-    else: 
-        
-        # Making a figure before we loop so all plots go in the same one. Sharing x,y axes per column/row
-        #and getting rid of space inbetween graphs
-        fig, potential_compare = (plt.subplots(subplot_layout[0],subplot_layout[1],sharex=True,sharey=True))
-    #                                           gridspec_kw={'hspace': 0, 'wspace': 0}))
-    
-    #Defining an empty list to hold the solutions of each PDE, with #elements equal to samples
-    u_list = [0 for sample in range(len(PDE_List))]
-
-    #Defining a list of the potentials from the solution from each weak form
-    potential_list = u_list
-
-    #List for the sorted potentials
-    potential_sorted_list = u_list
-    
-    #We loop over the chosen variable, going from its max_value/sample number to its max value
-    for j, variable_value in enumerate(np.linspace(1,samples,samples)*max_value/samples):
-        
-        #Assigning the value of variable_value to the variable (e.g. standard deviation, #source etc.)
-        #We need to evaluate it from here through te variable name in order for it to correctly pass it
-        #to the c++ code in the solver. {variable name}. Must use exec, not eval for assignment
-        exec(f'{variable_name} = {variable_value}')
-        
-        print(f'{variable_name} = {eval(variable_name)}')
-        
-        #If there are two or fewer subplots, the subplot index must actually be a number, not a tuple.
-        #Either 0 or 1, so same as j.
-        if samples <= 2:
-
-            subplot_index = j
-        
-        else:
-        
-            #Converting the index i to binary, then using it to indicate the subplots to use [0,0], [0,1]
-            # and so on
-            subplot_index = ((int(j/2), j%2))
-        
-        #Looping over weak forms for the same initial guess and source
-        for i, PDE in enumerate(PDE_List):
-            
-            #Putting the solutions in the u_list list
-            u_list[i], f = solve_PDE(PDE)
-
-            #Getting the potentials and sorted potentials for each solution
-            potential_list[i] = u_list[i].compute_vertex_values()
-            potential_sorted_list[i] = potential_list[i][sorting_index]
-            
-            #If we have the Newtonian potential, we add the difference at the boundary so they are on the
-            #same part of the plot. Doesnt matter that we add a constant to the potential anyway
-            if 'Newton' in PDE.name:
-                
-                potential_sorted_list[i] = (potential_sorted_list[i] + sqrt(G*mgb*a0)*ln(domain_size))
-            
-            #If we have only one sample, we plot on the plot itself, not a subplot
-            if samples == 1:
-                
-                #Plot all the potentials on the same graph
-                potential_compare.plot(r_sorted, potential_sorted_list[i], label = PDE.name)
-            
-            else:
-            
-                #Plot all the potentials on the same graph
-                potential_compare[subplot_index].plot(r_sorted, potential_sorted_list[i], label = PDE.name)
-        
-        #Making a string for the title of each plot. The :.2E is to format the number in the title to be
-        #in powers of 10.
-        plot_title = f'${variable_title} = {(int(variable_value)):.1E} \: {title_units}$'
-        
-        #If we have only 1 sample, we need to call the function for the plot, rather than subplot
-        if samples == 1:
-        
-            #Giving a title to each subplot
-            potential_compare.set_title(plot_title)
-
-            #Formatting each subplot after it's been filled with all the curves
-            plot_format(potential_compare,1,1)
-        
-        else:
-
-            potential_compare[subplot_index].set_title(plot_title)
-
-            plot_format(potential_compare[subplot_index],1,1)
-        
-    return u_list, potential_sorted_list
-
