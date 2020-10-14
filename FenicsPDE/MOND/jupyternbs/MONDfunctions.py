@@ -790,15 +790,18 @@ def plot_mesh_slice(amount, figure, mesh, center_of_mass, degree, source_coordin
     
     #plotting the total/vertex_fraction closest vertices to the origin
     #s gives the size of the dots, multiplying it by vertex_fraction so when we have less dots
-    #we can make them more visible
+    #we can make them more visible. Having vertex_number/(amount+1) cause on MPI it could be that
+    #a given mesh slice has amount=0!
     (mesh_xy_axis.scatter(x_xy_plane, y_xy_plane, z_xy_plane,
-                         marker = '.', s=vertex_number/amount, c = z_xy_plane))
+                         marker = '.', s=vertex_number/(amount+1), c = z_xy_plane))
     
     #Plotting the source(s) on top of the mesh points, to check if we refine mesh correctly
     if show_source == True:
         
+        #Again adding 1 to amount when we divide by it or might divide by 0 when using MPI if 
+        #a submesh has amount = 0
         (mesh_xy_axis.scatter(source_coordinates[:,0],source_coordinates[:,1],
-        source_coordinates[:,2], marker = 'o', s=vertex_number/amount*5, c = 'r', label='Source'))
+        source_coordinates[:,2], marker = 'o', s=vertex_number/((amount+1)*5), c = 'r', label='Source'))
             
     
     #Projecting each point on the xy plane, at z=0 (zs=0)
@@ -819,7 +822,7 @@ def plot_mesh_slice(amount, figure, mesh, center_of_mass, degree, source_coordin
         
         if show_source:
             (plt.scatter(source_coordinates[:,0],source_coordinates[:,1], marker = 'o',
-            color = 'r', s=vertex_number/amount*5))
+            color = 'r', s=vertex_number/((amount+1)*5)))
         
     else:
         pass
@@ -845,27 +848,30 @@ def trisurf_function_slice(figure, function, amount, height, mesh, center_of_mas
     plane_trisurf = figure.add_subplot(111, projection='3d')
     
     #Plotting the trisurf (triangulated surface) on the plane
-    plane_trisurf.plot_trisurf(x_xy_plane, y_xy_plane, function_xy_plane, cmap = 'jet')
-    
-    #Setting the x and y limits to leave some space for the contours to be clearer
-    x_bottom, x_top = plt.xlim(-domain_size*1.2, domain_size*1.2) 
-    y_bottom, y_top = plt.ylim(-domain_size*1.2, domain_size*1.2) 
-    
-    #Setting the z limit conditionally, based on the function being increasing or decreasing
-    if high_low == 'high':
-        z_limit = function.max()
-    
-    else:
-        z_limit = function.min()
-    
-    #If project = True, project contours on each axis
-    if project:
-    
-        #Projecting contours of the surface in each cartesian direction using zdir and offset
-        #for direction and offset from the axes origins respectively
-        plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='z', offset=z_limit, cmap = 'jet')
-        plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='x', offset=y_bottom, cmap = 'jet')
-        plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='y', offset=x_top, cmap = 'jet')
+    #Only do this for x,y,z >3 or throws error. This is necessary as when using MPI certain submeshes
+    #might not have the needed # elements. They're all the same length, so checking one is sufficient
+    if (len(x_xy_plane) > 3):
+        plane_trisurf.plot_trisurf(x_xy_plane, y_xy_plane, function_xy_plane, cmap = 'jet')
+
+        #Setting the x and y limits to leave some space for the contours to be clearer
+        x_bottom, x_top = plt.xlim(-domain_size*1.2, domain_size*1.2) 
+        y_bottom, y_top = plt.ylim(-domain_size*1.2, domain_size*1.2) 
+
+        #Setting the z limit conditionally, based on the function being increasing or decreasing
+        if high_low == 'high':
+            z_limit = function.max()
+
+        else:
+            z_limit = function.min()
+
+        #If project = True, project contours on each axis
+        if project:
+
+            #Projecting contours of the surface in each cartesian direction using zdir and offset
+            #for direction and offset from the axes origins respectively
+            plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='z', offset=z_limit, cmap = 'jet')
+            plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='x', offset=y_bottom, cmap = 'jet')
+            plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='y', offset=x_top, cmap = 'jet')
 
         
 # ## Plotting contour lines of the potential, so we can do that for different values of z and see the whole domain.
@@ -891,8 +897,11 @@ def tricontour_function_slice(figure, function, center_of_mass, amount, levels, 
     contour_levels = np.linspace(function.min(), function.max(), levels)
     
     #Plotting the contour
-    plane_tricontour.tricontour(x_xy_plane, y_xy_plane, function_xy_plane, contour_levels, cmap = 'jet')
-    plane_tricontour.set_aspect('equal', 'box')
+    #Only do this for x,y,z >3 or throws error. This is necessary as when using MPI certain submeshes
+    #might not have the needed # elements. They're all the same length, so checking one is sufficient
+    if (len(x_xy_plane) > 3):
+        plane_tricontour.tricontour(x_xy_plane, y_xy_plane, function_xy_plane, contour_levels, cmap = 'jet')
+        plane_tricontour.set_aspect('equal', 'box')
     
     
 def contour_3D_slices(figure, function, amount, height, slices = 50, high_low = 'low'):

@@ -46,7 +46,7 @@ stand_dev = domain_size/3/1.5
 #Standard deviation for the gaussian peaks themselves, Radius tot/3 so 99.7% of the mass is inside the 
 #equivalent dirac delta made with a uniform sphere
 stand_dev_peak = radius_tot/3
-mesh_resolution = 17
+mesh_resolution = 25
 #Coefficient for GEA changing the potential based on how spherically symmetric the mass distribution is
 c_2 = -1.8
 #Coefficient for GEA giving the magnitude of the K^3/2 term in the Lagrangian, which determines the
@@ -56,7 +56,7 @@ beta = 6/sqrt(2+c_2)
 plot_resolution = mesh_resolution
 #Size of the mesh for plotting. Should be bigger than the normal one or some points might be outside its domain
 mesh_plot_size = domain_size*0.8
-refine_times = 1
+refine_times = 0
 p = 1*kp
 source_number = 1
 source_mass = mgb/source_number
