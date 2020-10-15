@@ -42,11 +42,11 @@ volume_out = 4/3*pi*(radius_tot**3)
 #Standard deviation for coarse mass distribution and location of peaks. domain_size/3 corresponds to have
 #99.7% of the mass distribution inside the domain. Dividing that by some other factor makes it less 
 #likely that the masses will be outside the domain and throw an error
-stand_dev = domain_size/3/1.5
+stand_dev = domain_size/3/2
 #Standard deviation for the gaussian peaks themselves, Radius tot/3 so 99.7% of the mass is inside the 
 #equivalent dirac delta made with a uniform sphere
-stand_dev_peak = radius_tot/3
-mesh_resolution = 25
+stand_dev_peak = radius_tot*10
+mesh_resolution = 21
 #Coefficient for GEA changing the potential based on how spherically symmetric the mass distribution is
 c_2 = -1.8
 #Coefficient for GEA giving the magnitude of the K^3/2 term in the Lagrangian, which determines the
@@ -56,14 +56,17 @@ beta = 6/sqrt(2+c_2)
 plot_resolution = mesh_resolution
 #Size of the mesh for plotting. Should be bigger than the normal one or some points might be outside its domain
 mesh_plot_size = domain_size*0.8
-refine_times = 0
+refine_times = 10
 p = 1*kp
 source_number = 1
 source_mass = mgb/source_number
 radius_population = domain_size/2
 #Degree of the functionspace we want to solve the PDE on
 #IMPORTANT: Optimal degree = 3, increasing it to 4 does not make the computation more accurate!
-degree_PDE = 1
+degree_PDE = 3
+#BVP To be solved: we use a string so we dont need to define the object in here and instead we
+#evaluate it in the main code
+BVP_to_solve = 'mond_standard_gauss'
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again
@@ -83,7 +86,7 @@ central_mass = True
 #The operation is very expensive, so if it's not strictly necessary it's better to not do it at all
 acceleration_needed = False
 #Option to plot 3D graphs
-plot_3D_graphs = True
+plot_3D_graphs = False
 #Option to avoid printing redundant information from each core when running the code in parallel from
 #a python (.py) script obtained from the jupyter notebook.
 # parallel_run = True

@@ -196,12 +196,18 @@ def more_modified_refinement (mesh, location, how_many):
             #List comprehension containing the cell IDs for the cells containing a source
             #The if statement make sure that the intersect_list is only populated for points
             #that are inside the mesh. For parallel, where the mesh is split, this is necessary!
-            intersect_list = [intersect(mesh, source).intersected_cells() for source in location if mesh.bounding_box_tree().compute_first_entity_collision(source) < mesh.num_cells()]
+            intersect_list = [intersect(mesh, source).intersected_cells() for source in location]
             
             #Setting the cell function contain_function to true for each cell containing a source
             for cell_index in intersect_list:
                 
-                contain_function[cell_index[0]] = True
+                #For MPI, the intersect_list might be empty in case the point is not inside the 
+                #submesh! So we first need to check that there's an element present. If we don't
+                #we'll get an error about index out of range cause index 0 is out of range for an
+                #empty list!
+                if not len(cell_index) == 0: 
+                
+                    contain_function[cell_index[0]] = True
             
             #Refining the mesh only for cells that contain a source
             mesh = refine(mesh, contain_function)    
