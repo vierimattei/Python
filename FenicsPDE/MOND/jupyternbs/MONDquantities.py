@@ -23,13 +23,17 @@ rs = 0.00465*au
 mgb = 1.1*6.6*10**10*ms
 #Mass of the virgo cluster (inlcudes dark matter)
 mass_virgo = 10**15*ms
-#Mass of the coma cluster (without dark matter, from the Brownstein 2006 paper)
-mass_coma = 3.81*10**14*ms
+#Mass of the coma cluster (without dark matter, from the Brownstein 2006 paper). This is not the same 
+#as the gas mass calculated Newtonianly! For that, we need to take the 3-beta model and use its 
+#distribution directly!
+mass_coma_MOND = 3.81*10**14*ms
+#Gas mass in the coma cluster
+mass_coma_gas = 1.13*10**14*ms
 #Radius of the coma cluster
-radius_coma = 3000*kp
+radius_coma = 1954*kp
 
 #Here replacing the mass of the galaxy with that of virgo, since we're working on the cluster scale
-mgb = mass_coma
+mgb = mass_coma_gas
 
 #Setting domain_size to the radius of the Virgo Cluster, 2.3 Mpc
 domain_size = radius_coma
@@ -64,9 +68,15 @@ radius_population = domain_size/2
 #Degree of the functionspace we want to solve the PDE on
 #IMPORTANT: Optimal degree = 3, increasing it to 4 does not make the computation more accurate!
 degree_PDE = 3
+#Values for the three parameter beta model
+beta = 2/3
+#Characteristic radius
+r_c = 242.3*kp
+#Density
+rho_0 = 0.06*10**(-28)
 #BVP To be solved: we use a string so we dont need to define the object in here and instead we
 #evaluate it in the main code
-BVP_to_solve = 'mond_standard_gauss'
+BVP_to_solve = 'newton_beta'
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again

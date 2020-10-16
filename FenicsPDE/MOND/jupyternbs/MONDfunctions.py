@@ -425,7 +425,7 @@ def make_source_string(how_many_sources):
     
     #Defining the initial string that we want to add the variable source location definitions to
     executable_string = ('(Expression(source,'
-    'degree = degree_PDE, a0 = a0, ms = ms,mgb = mgb, G = G,  ly = ly, kp = kp, radius_tot = radius_tot,'
+    'degree = degree_PDE, a0 = a0, ms = ms,mgb = mgb, G = G,  ly = ly, kp = kp, radius_tot = radius_tot, beta = beta, r_c = r_c, rho_0 = rho_0,'
     'volume_out = volume_out, stand_dev = stand_dev, stand_dev_peak=stand_dev_peak, p=p,'
     'source_number = source_number, source_mass = source_mass')
 

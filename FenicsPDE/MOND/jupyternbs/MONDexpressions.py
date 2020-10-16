@@ -61,7 +61,7 @@ f_multiple_dirac = make_discrete_dirac(source_number)
 f_multiple_gauss = make_discrete_gauss(source_number)
 
 #Source for the three parameter beta model, usually used to describe the gas in clusters
-f_gas_three_beta = ('rho_0/(pow(1+pow(x[0],2) + pow(x[1],2) + pow(x[2],2)/pow(r_c,2)), 3*beta/2)')
+f_gas_three_beta = ('rho_0/(pow(1+(pow(x[0],2) + pow(x[1],2) + pow(x[2],2))/pow(r_c,2), 3*beta/2))')
 
 # # C++ Expressions for the Initial Guesses/BCs
 

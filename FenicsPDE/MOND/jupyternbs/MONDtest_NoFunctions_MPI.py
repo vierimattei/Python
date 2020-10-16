@@ -383,6 +383,12 @@ mond_deep_continuous = BVP(F_MOND_deep, u_displaced_cpp, f_exponent_test, 'Deep 
 mond_simple_continuous = BVP(F_MOND_simple, u_displaced_cpp, f_exponent_test, 'Simple MOND, continuous gauss')
 mond_standard_continuous = BVP(F_MOND_standard, u_displaced_cpp, f_exponent_test, 'Standard MOND, continuous gauss')
 
+#BVPs for a three parameter beta distribution
+newton_beta = BVP(F_Newton, u_Newton, f_gas_three_beta, 'Newton, beta')
+mond_deep_beta = BVP(F_MOND_deep, u_sphere_cpp, f_gas_three_beta, 'Deep MOND, beta')
+mond_simple_beta = BVP(F_MOND_simple, u_sphere_cpp, f_gas_three_beta, 'Simple MOND, beta')
+mond_standard_beta = BVP(F_MOND_standard, u_sphere_cpp, f_gas_three_beta, 'Standard MOND, beta')
+
 
 # # Trying an alternative method for assigning values inside the c++ expressions by using exec, to avoid the limit on eval!
 
@@ -523,7 +529,7 @@ if plotting_option == True:
 potential = u.compute_vertex_values()
 
 #The value of the source at each vertex of the mesh
-source = f.compute_vertex_values(mesh)
+source = 1/(4*pi*G)*f.compute_vertex_values(mesh)
 
 #Getting the degree from the scalar function space V from the PDE
 degree = V.ufl_element().degree()
@@ -622,7 +628,7 @@ print('Data collected in {} s\n'.format(data_collection_time.time))
 # apparent_mass_project = project(apparent_mass_divergence, V)
 
 #Gathering the values of the mass distribution 
-apparent_mass_distribution = apparent_mass_project.compute_vertex_values()
+apparent_mass_distribution = 1/(4*pi*G)*apparent_mass_project.compute_vertex_values()
 
 #Sorting the mass distribution values
 apparent_mass_distribution_sorted = apparent_mass_distribution[sorting_index]
@@ -717,6 +723,9 @@ if rank == 0:
     source_total_sorted = source_total_sorted[total_nonzero_indices]
     apparent_mass_total_sorted = apparent_mass_total_sorted[total_nonzero_indices]
     
+    #The dark matter is the difference between the apparent and source masses
+    dark_mass_total_sorted = apparent_mass_total_sorted - source_total_sorted
+    
     #Saving all these numpy arrays so we can plot them again in Python, instead of just having a saved figure
     #that is not interactive!
     
@@ -730,6 +739,7 @@ if rank == 0:
     np.save('Numpy_Arrays/potential_saved.npy', potential_total_sorted)
     np.save('Numpy_Arrays/source_saved.npy', source_total_sorted)
     np.save('Numpy_Arrays/apparent_mass_saved.npy', apparent_mass_total_sorted)
+    np.save('Numpy_Arrays/dark_mass_saved.npy', dark_mass_total_sorted)
     np.save('Numpy_Arrays/r_sorted_saved.npy', r_total_sorted)
 
 
@@ -1041,11 +1051,11 @@ fig, apparent_mass_plot = plt.subplots()
 plot_together = True
 
 #Scaling the mass distribution by 4*pi*G to get rho itself
-apparent_mass_plot.plot(r_sorted, 1/(4*pi*G)*apparent_mass_distribution_sorted, label = 'Apparent Mass Distribution')
+apparent_mass_plot.plot(r_sorted, apparent_mass_distribution_sorted, label = 'Apparent Mass Distribution')
 
 if plot_together == True:
     
-    apparent_mass_plot.plot(r_sorted, 1/(4*pi*G)*source_sorted, label = 'Baryonic Mass Distribution', linestyle='--')
+    apparent_mass_plot.plot(r_sorted, source_sorted, label = 'Baryonic Mass Distribution', linestyle='--')
 
 plt.title('Apparent Mass Distribution')
 plot_annotations(apparent_mass_plot)
@@ -1060,9 +1070,9 @@ if rank == 0:
     fig, apparent_mass_total_plot = plt.subplots()
 
     #Scaling the mass distribution by 4*pi*G to get rho itself
-    apparent_mass_total_plot.plot(r_total_sorted, 1/(4*pi*G)*apparent_mass_total_sorted, label = 'Apparent Mass Distribution')
+    apparent_mass_total_plot.plot(r_total_sorted, apparent_mass_total_sorted, label = 'Apparent Mass Distribution')
 
-    apparent_mass_total_plot.plot(r_total_sorted, 1/(4*pi*G)*source_total_sorted, label = 'Baryonic Mass Distribution', linestyle='--')
+    apparent_mass_total_plot.plot(r_total_sorted, source_total_sorted, label = 'Baryonic Mass Distribution', linestyle='--')
 
     plt.title('Apparent Mass Distribution')
     plot_annotations(apparent_mass_total_plot)
@@ -1082,7 +1092,7 @@ dark_matter_density_sorted = (apparent_mass_distribution_sorted-source_sorted)
 
 fig, dark_matter_density_plot = plt.subplots()
 
-dark_matter_density_plot.plot(r_sorted, 1/(4*pi*G)*dark_matter_density_sorted)
+dark_matter_density_plot.plot(r_sorted, dark_matter_density_sorted)
 plt.title('Dark Matter Distribution')
 plot_annotations(dark_matter_density_plot)
 plot_format(dark_matter_density_plot,1,1)
