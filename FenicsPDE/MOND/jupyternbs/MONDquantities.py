@@ -28,7 +28,7 @@ mass_virgo = 10**15*ms
 #distribution directly!
 mass_coma_MOND = 3.81*10**14*ms
 #Gas mass in the coma cluster
-mass_coma_gas = 1.13*10**14*ms
+mass_coma_gas = 1.13*(10**14)*ms
 #Radius of the coma cluster
 radius_coma = 1954*kp
 
@@ -49,7 +49,7 @@ volume_out = 4/3*pi*(radius_tot**3)
 stand_dev = domain_size/3/2
 #Standard deviation for the gaussian peaks themselves, Radius tot/3 so 99.7% of the mass is inside the 
 #equivalent dirac delta made with a uniform sphere
-stand_dev_peak = radius_tot*10
+stand_dev_peak = radius_tot/3
 mesh_resolution = 21
 #Coefficient for GEA changing the potential based on how spherically symmetric the mass distribution is
 c_2 = -1.8
@@ -67,16 +67,17 @@ source_mass = mgb/source_number
 radius_population = domain_size/2
 #Degree of the functionspace we want to solve the PDE on
 #IMPORTANT: Optimal degree = 3, increasing it to 4 does not make the computation more accurate!
-degree_PDE = 3
+degree_PDE = 2
 #Values for the three parameter beta model
-beta = 2/3
+beta = 0.654
 #Characteristic radius
 r_c = 242.3*kp
-#Density
-rho_0 = 0.06*10**(-28)
+#Density. The power 10^-31 is the power needed for the integrated density to have the correct value!
+#The units given in the paper dont add up!
+rho_0 = 0.06*(10**(-31))
 #BVP To be solved: we use a string so we dont need to define the object in here and instead we
 #evaluate it in the main code
-BVP_to_solve = 'newton_beta'
+BVP_to_solve = 'mond_standard_gauss'
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again

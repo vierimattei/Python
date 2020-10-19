@@ -539,7 +539,7 @@ degree = V.ufl_element().degree()
 # degree = higher_degree
 
 
-#
+#Laplacian of the solution to get back the scaled mass distribution
 lap = div(grad(u))
 
 apparent_mass_project = project(lap, V)
@@ -627,11 +627,15 @@ print('Data collected in {} s\n'.format(data_collection_time.time))
 # #Projecting the divergence above onto the same scalar function space as the potential
 # apparent_mass_project = project(apparent_mass_divergence, V)
 
+integral = assemble(lap*dx)
+
 #Gathering the values of the mass distribution 
 apparent_mass_distribution = 1/(4*pi*G)*apparent_mass_project.compute_vertex_values()
 
 #Sorting the mass distribution values
 apparent_mass_distribution_sorted = apparent_mass_distribution[sorting_index]
+
+integral
 
 
 # In[ ]:
@@ -673,7 +677,7 @@ if rank == 0:
     
     #There is a problem with the receive buffer not being big enough. A simple fix for now is to 
     #multiply its size by 1.5, then we can remove all the trailing zeros
-    receiver_size = int(1.1*total_mesh_vertices)
+    receiver_size = int(1.5*total_mesh_vertices)
 
     potential_total = np.empty(receiver_size, dtype = type(potential[0]))
     x_coords_total = np.empty(receiver_size, dtype = type(x_coords[0]))
