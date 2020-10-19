@@ -49,7 +49,7 @@ volume_out = 4/3*pi*(radius_tot**3)
 stand_dev = domain_size/3/2
 #Standard deviation for the gaussian peaks themselves, Radius tot/3 so 99.7% of the mass is inside the 
 #equivalent dirac delta made with a uniform sphere
-stand_dev_peak = radius_tot/3
+stand_dev_peak = radius_tot/3*100
 mesh_resolution = 21
 #Coefficient for GEA changing the potential based on how spherically symmetric the mass distribution is
 c_2 = -1.8
@@ -77,7 +77,7 @@ r_c = 242.3*kp
 rho_0 = 0.06*(10**(-31))
 #BVP To be solved: we use a string so we dont need to define the object in here and instead we
 #evaluate it in the main code
-BVP_to_solve = 'mond_standard_gauss'
+BVP_to_solve = 'mond_standard_beta'
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again

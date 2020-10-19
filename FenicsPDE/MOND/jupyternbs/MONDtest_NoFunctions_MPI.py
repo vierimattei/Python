@@ -635,7 +635,7 @@ apparent_mass_distribution = 1/(4*pi*G)*apparent_mass_project.compute_vertex_val
 #Sorting the mass distribution values
 apparent_mass_distribution_sorted = apparent_mass_distribution[sorting_index]
 
-integral
+(integral/(4*pi*G))/mgb
 
 
 # In[ ]:
@@ -709,7 +709,13 @@ if rank == 0:
 
     #Sorting all total quantities
     r_total_sorted = r_coords_total[sorting_index_total]
-
+    
+    x_total_sorted = x_coords_total[sorting_index_total]
+    
+    y_total_sorted = y_coords_total[sorting_index_total]
+    
+    z_total_sorted = z_coords_total[sorting_index_total]
+    
     potential_total_sorted = potential_total[sorting_index_total]
     
     source_total_sorted = source_total[sorting_index_total]
@@ -722,6 +728,9 @@ if rank == 0:
     total_nonzero_indices = (r_total_sorted > r_sorted[0]/(10**5))
     
     #Taking the non-padding components of radius, potential, source and mass distribution
+    x_total_sorted = x_total_sorted[total_nonzero_indices]
+    y_total_sorted = y_total_sorted[total_nonzero_indices]
+    z_total_sorted = z_total_sorted[total_nonzero_indices]
     r_total_sorted = r_total_sorted[total_nonzero_indices]
     potential_total_sorted = potential_total_sorted[total_nonzero_indices]
     source_total_sorted = source_total_sorted[total_nonzero_indices]
@@ -744,6 +753,9 @@ if rank == 0:
     np.save('Numpy_Arrays/source_saved.npy', source_total_sorted)
     np.save('Numpy_Arrays/apparent_mass_saved.npy', apparent_mass_total_sorted)
     np.save('Numpy_Arrays/dark_mass_saved.npy', dark_mass_total_sorted)
+    np.save('Numpy_Arrays/x_sorted_saved.npy', x_total_sorted)
+    np.save('Numpy_Arrays/y_sorted_saved.npy', y_total_sorted)
+    np.save('Numpy_Arrays/z_sorted_saved.npy', z_total_sorted)
     np.save('Numpy_Arrays/r_sorted_saved.npy', r_total_sorted)
 
 
@@ -753,19 +765,19 @@ if rank == 0:
 
 
 
-# In[26]:
+# In[63]:
 
 
 if rank == 0:
 
     fig, fig_total_potential = plt.subplots(sharex=True, sharey=True)
 
-    fig_total_potential.plot(r_total_sorted, potential_total_sorted)
+    fig_total_potential.scatter(x_total_sorted, potential_total_sorted, marker = '.', s = 0.5, c = y_total_sorted/y_total_sorted.max(), cmap = 'jet')
     
-    plot_annotations(fig_total_potential)
+#     plot_annotations(fig_total_potential)
 
     #Formatting plot using the function I made
-    plot_format(fig_total_potential,1,1)
+    plot_format(fig_total_potential,1,0)
     
     #Saving the figure in the Figure folder, removed padding arounf with bbox_inches and 
     plt.savefig(f'Figures/total_potential.pdf', bbox_inches='tight')

@@ -83,7 +83,7 @@ u_isothermal_cpp = ('2/3*sqrt(G*mgb*a0/6)*2.3206*log10(1 + pow((pow(x[0],2) + '
                     'pow(x[1],2) + pow(x[2],2)), 3/4) / pow(p, 3/2))')
 
 #Boundary condition for displaced source/center of mass
-u_displaced_cpp = ('sqrt(G*source_mass*a0)*1/2*2.3026*log10(pow((x[0] - center_of_mass_x),2)'
+u_displaced_cpp = ('sqrt(G*mgb*a0)*1/2*2.3026*log10(pow((x[0] - center_of_mass_x),2)'
                           '+pow((x[1] - center_of_mass_y),2)+pow((x[2] - center_of_mass_z),2))')
 
 #Boundary condition for Newtonian Gravity
