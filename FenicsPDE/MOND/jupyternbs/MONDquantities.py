@@ -5,7 +5,12 @@ import mshr as mshr
 
 c = 2.998*10**8
 G = 6.674*10**(-11) 
-a0 = 1.2*10**(-10) 
+
+#Value of a0. Currently changed it so the value of the Hubble constant when we take it as H0=2pi*a0/c
+#Is close, but below the most recent estimate of the Hubble constant. We do this cause for the cluster
+#database we need to make a pick for the numerical value of H0, and setting it w.r.t. a0 gives a 
+#coherent picutre for MOND on cluster scales.
+a0 = 1.14*10**(-10) 
 #Mass of the sun
 ms = 1.989*10**30 
 mgd = 10**12*ms 
@@ -55,7 +60,7 @@ mesh_resolution = 21
 c_2 = -1.8
 #Coefficient for GEA giving the magnitude of the K^3/2 term in the Lagrangian, which determines the
 #interpolation function
-beta = 6/sqrt(2+c_2)
+beta_GEA = 6/sqrt(2+c_2)
 #Resolution of the uniform grid onto which we interpolate our results to have nicer plots
 plot_resolution = mesh_resolution
 #Size of the mesh for plotting. Should be bigger than the normal one or some points might be outside its domain
@@ -74,10 +79,10 @@ beta = 0.654
 r_c = 242.3*kp
 #Density. The power 10^-31 is the power needed for the integrated density to have the correct value!
 #The units given in the paper dont add up!
-rho_0 = 0.06*(10**(-31))
+rho_0 = 0.06*(10**(-25))
 #BVP To be solved: we use a string so we dont need to define the object in here and instead we
 #evaluate it in the main code
-BVP_to_solve = 'mond_standard_beta'
+BVP_to_solve = 'newton_beta'
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again

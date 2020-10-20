@@ -8,6 +8,9 @@
 
 from dolfin import *
 
+#pandas is needed to import the cluster database
+import pandas as pd
+
 #Importing MPI for parallel computing
 # from mpi4py import MPI
 
@@ -94,6 +97,9 @@ parameters["refinement_algorithm"] = "plaza"
 #Optimisation
 parameters["form_compiler"]["optimize"]     = True
 parameters["form_compiler"]["cpp_optimize"] = True
+
+#Nonzero initial guess for the Krylov solver. Doesnt seem to make a difference for nonlinear problems
+parameters['krylov_solver']['nonzero_initial_guess'] = True
 
 #Ghost mode for when using MPI. Each process gets ghost vertices for the part of the domain it does not
 #own. Have to set to 'none' instead or I get Error 'Unable to create BoundaryMesh with ghost cells.'
@@ -210,19 +216,23 @@ else:
 #Subtracting 0.5 so #we're sampling equally from the positive and negative instead of from 0 to 1
 # random_coordinates = random_max_distance * (np.random.rand(source_number, 3)-0.5)
 
-# Uncomment for test case with two equal masses on the xy plane at a given distance
-# their_distance = 3
-
 # # random_coordinates[0][0] = -domain_size/their_distance
 if central_mass:
 
     random_coordinates_x[0] = 0
     random_coordinates_y[0] = 0
     random_coordinates_z[0] = 0
-
-# random_coordinates[1][0] = domain_size/their_distance
-# random_coordinates[1][1] = 0
-# random_coordinates[1][2] = 0
+    
+#     # Uncomment for test case with two equal masses on the xy plane at a given distance
+#     their_distance = 2
+    
+#     random_coordinates_x[1] = -domain_size/their_distance
+#     random_coordinates_y[1] = 0
+#     random_coordinates_z[1] = 0
+    
+#     random_coordinates_x[2] = domain_size/their_distance
+#     random_coordinates_y[2] = 0
+#     random_coordinates_z[2] = 0
 
 #Overall array containing all coordinates. If over-writing the random position, this has to go after it,
 #otherwise the c++ array for the source sets the wrong position!
@@ -390,16 +400,78 @@ mond_simple_beta = BVP(F_MOND_simple, u_sphere_cpp, f_gas_three_beta, 'Simple MO
 mond_standard_beta = BVP(F_MOND_standard, u_sphere_cpp, f_gas_three_beta, 'Standard MOND, beta')
 
 
+# # Taking parameters from the cluster database of Reiprich and Moffat
+
+# In[23]:
+
+
+#All the measurements use a reduced Hubble constant. As the Hubble constant can be expressed in terms
+#of Miglrom's constant and speed of light, we express it as that. I modified a0 = 1.14 * 10**-10 so 
+#that H0 is now very close to the latest (upper) estimate. Now a0 and H0 are consistent.
+H0 = 2*pi*(a0)/c
+
+#The Hubble constant used is h50, given as H0/50 km/s/Mpc. We need to multiply most of the quantities in
+#the table by this to obtain 
+h50 = H0/(50*10**3/(1000*kp))
+
+#In the database, there is an optional parameter c that indicates a different way of calculating the
+#error. Only some lines have it, so it throws pandas off. Removed it in the file itself
+#a2065, a2063, ngc5846 are missing from reiprich 2001 for rho_0. Had to add them in by hand 
+#in the rho_0 file.
+#In the PhD thesis Reiprich cut the table wrong so they're invisible! Unbelievable
+
+#Importing the text file
+df = pd.read_csv('cluster_database/cluster_data.txt', delimiter='\s+', header = None)
+
+#As the columns have no names in the initial file, we add the names here
+df.columns = ['name', 'beta_frame', 'beta+', 'beta-', 'r_c_frame', 'r_c+', 'r_c-', 'T', 'T+', 'T-',
+              'm5_frame', 'm5+', 'm5-', 'r5', 'r5+', 'r5-', 'm2', 'm2+', 'm2-', 'r2', 'r2+', 'r2-',
+              'mtot_frame', 'ref']
+
+# Using readline to open file containing rho_0 values and storing each line in Lines
+file1 = open('cluster_database/rho_0.txt', 'r') 
+Lines = file1.readlines() 
+file1.close()
+
+#Initialising numpy array to hold the values of rho_0
+rho_0_np = np.zeros((len(Lines),1))
+
+#Storing the content of each line into the numpy array
+for i, line in enumerate(Lines):
+    
+    #assigning each line to a member of the rho_0 numpy array
+    rho_0_np[i] = line
+
+#Flattening the array before putting it in the dataframe    
+rho_0_np = rho_0_np[:,0]
+#Adding the rho_0 values to the dataframe
+df['rho_0_frame'] = pd.Series(rho_0_np, index = df.index)
+
+# Displaying the full, uncut database with all parameters
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+#     print(df.head(2))
+    
+#The radii are given in units of kpc/h50. To get them in kpc we need to divide by h50
+#Only one useful for now to be scaled is r_c
+df.loc[:, 'r_c_frame'] = df.loc[:, 'r_c_frame']/h50
+
+
+# In[ ]:
+
+
+
+
+
 # # Trying an alternative method for assigning values inside the c++ expressions by using exec, to avoid the limit on eval!
 
-# In[17]:
+# In[18]:
 
 
 # test_string = make_source_string(10)
 # test_string
 
 
-# In[18]:
+# In[19]:
 
 
 #Defining a function for the boundary. Since we only have one BC for the whole boundary, we
@@ -409,7 +481,7 @@ def boundary(x, on_boundary):
     return on_boundary
 
 
-# In[19]:
+# In[20]:
 
 
 def solve_PDE(the_BVP):
@@ -471,14 +543,14 @@ def solve_PDE(the_BVP):
     return u, f
 
 
-# In[20]:
+# In[21]:
 
 
 #Waiting for each process to have completed before moving on to solve the PDE
 # MPI.barrier(comm)
 
 
-# In[21]:
+# In[22]:
 
 
 #Defined the quantity BVP_to_solve in the MONDquantities file as a string, so to use it we need to 
@@ -493,7 +565,7 @@ u, f = solve_PDE(eval(BVP_to_solve))
 
 # ## Finding the values of the function, its gradient and the source at each vertex of the mesh, and the coordinates at each point of the mesh
 
-# In[22]:
+# In[ ]:
 
 
 data_collection_start = time.time()
@@ -617,7 +689,7 @@ print('Data collected in {} s\n'.format(data_collection_time.time))
 
 # # Calculating the Laplacian of the potential to obtain the apparent dark matter distribution.
 
-# In[23]:
+# In[ ]:
 
 
 #The apparent mass distribution is the RHS of the Newtonian Poisson equation. No need to scale it as it
@@ -646,7 +718,7 @@ apparent_mass_distribution_sorted = apparent_mass_distribution[sorting_index]
 
 # # Gathering the potential and coordinate numpy array onto process 0 to have the full solution.
 
-# In[24]:
+# In[ ]:
 
 
 #First, we need to know how many vertices we have in total in the full mesh to preallocate the array
@@ -697,7 +769,7 @@ comm.Gatherv(source, source_total, root = 0)
 comm.Gatherv(apparent_mass_distribution, apparent_mass_total, root = 0)
 
 
-# In[25]:
+# In[ ]:
 
 
 #Now we want to sort as usual, now for the total potential and based on the overall r coordinates
@@ -765,7 +837,7 @@ if rank == 0:
 
 
 
-# In[63]:
+# In[ ]:
 
 
 if rank == 0:
@@ -783,7 +855,7 @@ if rank == 0:
     plt.savefig(f'Figures/total_potential.pdf', bbox_inches='tight')
 
 
-# In[27]:
+# In[ ]:
 
 
 if rank == 0:
@@ -818,7 +890,7 @@ if rank == 0:
 
 # ## Integrating quantitites along a straight line
 
-# In[28]:
+# In[ ]:
 
 
 if lensing_interpolations:
@@ -868,7 +940,7 @@ if lensing_interpolations:
 
 # ## Defining a function to compute the sum of the individual contributions from the analytic form so we can compare them to the overall solution we get from the PDE
 
-# In[29]:
+# In[ ]:
 
 
 potential_individual_diracs = 0
@@ -881,7 +953,7 @@ for coordinates in random_coordinates:
     potential_individual_diracs = potential_individual_diracs + sqrt(G*mgb*a0)*np.log(r_coords)
 
 
-# In[30]:
+# In[ ]:
 
 
 potential_individual_sum = sum_individual_contributions(mesh, origin, random_coordinates)
@@ -900,7 +972,7 @@ plt.scatter(x_coords, potential, s=0.1)
 
 
 
-# In[31]:
+# In[ ]:
 
 
 radial_plots_start = time.time()
@@ -962,7 +1034,7 @@ potential1_title = f'potential_1_p{rank}'
 
 # ## Finding the error in the potential, radially
 
-# In[32]:
+# In[ ]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -981,7 +1053,7 @@ plot_format(plot_potential_error,1,1)
 
 # # Looking at the value of the potential along a specific axis. Useful when dealing with a non-radially symmetric distribution
 
-# In[33]:
+# In[ ]:
 
 
 plt.figure()
@@ -991,7 +1063,7 @@ plt.scatter(x_coords, potential, marker = '.', s = 0.5, c = y_coords/y_coords.ma
 
 # ## Next, the acceleration
 
-# In[34]:
+# In[ ]:
 
 
 #Defining analytic functions to check if the result is correct
@@ -1027,7 +1099,7 @@ plot_format(acceleration1,1,1)
 
 # ## Finding the error in the acceleration
 
-# In[35]:
+# In[ ]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -1044,7 +1116,7 @@ plot_format(acceleration_error_plot,1,1)
 
 # ## Plotting the actual mass distribution that we input in the PDE, correpsonding to the baryonic matter
 
-# In[36]:
+# In[ ]:
 
 
 fig, source_radial_plot = plt.subplots()
@@ -1059,7 +1131,7 @@ plot_format(source_radial_plot,1,1)
 
 # # Plotting the laplacian of the solution, that for MOND corresponds to the total matter distribution, baryons+dark matter. For Newton it should correspond to the mass distribution that we input in the PDE
 
-# In[37]:
+# In[ ]:
 
 
 fig, apparent_mass_plot = plt.subplots()
@@ -1078,7 +1150,7 @@ plot_annotations(apparent_mass_plot)
 plot_format(apparent_mass_plot,1,1)
 
 
-# In[38]:
+# In[ ]:
 
 
 if rank == 0:
@@ -1100,7 +1172,7 @@ if rank == 0:
 
 # # Plotting the difference between the apparent mass distribution obtained as the Laplacian of the solution, and the baryonic mass distribution which is the RHS of the PDE
 
-# In[39]:
+# In[ ]:
 
 
 #The difference between apparent mass and baryonic mass is the dark matter distribution
@@ -1114,7 +1186,7 @@ plot_annotations(dark_matter_density_plot)
 plot_format(dark_matter_density_plot,1,1)
 
 
-# In[40]:
+# In[ ]:
 
 
 #The ratio between apparent mass and baryonic mass is the dark matter distribution
@@ -1133,7 +1205,7 @@ plot_format(dark_matter_ratio_plot,1,1)
 
 # ### Applying the function to the generated mesh
 
-# In[41]:
+# In[ ]:
 
 
 radial_dist_hist(r_sorted, mesh, False, 10)
@@ -1143,7 +1215,7 @@ radial_plots_time = run_time(radial_plots_start - radial_plots_end, 'Radial Plot
 # section_times.append(radial_plots_time)
 
 
-# In[42]:
+# In[ ]:
 
 
 plots_3D_start = time.time()
@@ -1160,7 +1232,7 @@ if plot_3D_graphs:
 
 # ## For non spherically symmetric meshes, and for visual clarity, taking a slice of the mesh and plotting it in 2D
 
-# In[43]:
+# In[ ]:
 
 
 if plot_3D_graphs: 
@@ -1175,7 +1247,7 @@ if plot_3D_graphs:
 
 
 
-# In[44]:
+# In[ ]:
 
 
 if plot_3D_graphs:
@@ -1185,7 +1257,7 @@ if plot_3D_graphs:
     plt.title('Potential in xy-plane')
 
 
-# In[45]:
+# In[ ]:
 
 
 if (plot_3D_graphs and acceleration_needed):  
@@ -1195,7 +1267,7 @@ if (plot_3D_graphs and acceleration_needed):
     plt.title('Acceleration in xy-plane')
 
 
-# In[46]:
+# In[ ]:
 
 
 # trisurf_source = plt.figure()
@@ -1205,7 +1277,7 @@ if (plot_3D_graphs and acceleration_needed):
 
 # ## Plotting contour lines of the potential, so we can do that for different values of z and see the whole domain.
 
-# In[47]:
+# In[ ]:
 
 
 tricontour_potential = plt.figure()
@@ -1213,7 +1285,7 @@ tricontour_function_slice(tricontour_potential, potential, Point(center_of_mass)
 plt.title('Potential in xy-plane')
 
 
-# In[48]:
+# In[ ]:
 
 
 if acceleration_needed:
@@ -1223,7 +1295,7 @@ if acceleration_needed:
     plt.title('Acceleration in xy-plane')
 
 
-# In[49]:
+# In[ ]:
 
 
 tricontour_source = plt.figure()
@@ -1234,7 +1306,7 @@ plt.title('Source in xy-plane')
 # ## Making a function to plot slices and view them in 3D
 # ### The 2 cells below this on contain the call to the function
 
-# In[50]:
+# In[ ]:
 
 
 #IMPORTANT: Right now, using a predefined amount of contours for each level, but this means
@@ -1248,7 +1320,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(potential_slices, potential, 100, 0)
 
 
-# In[51]:
+# In[ ]:
 
 
 # acceleration_slices = plt.figure()
@@ -1256,7 +1328,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(acceleration_slices, acceleration_magnitude, 100, 0)
 
 
-# In[52]:
+# In[ ]:
 
 
 # source_slices = plt.figure()
@@ -1266,7 +1338,7 @@ plt.title('Source in xy-plane')
 
 # ## Looking at a quiver plot of the acceleration (useful when having multiple masses)
 
-# In[53]:
+# In[ ]:
 
 
 figure = plt.figure()
@@ -1276,7 +1348,7 @@ quivers = figure.add_subplot(111, projection='3d')
 quivers.quiver(x_coords, y_coords, z_coords, acceleration_x, acceleration_y, acceleration_z, length=domain_size, normalize = False)
 
 
-# In[54]:
+# In[ ]:
 
 
 plots_3D_end = time.time()
@@ -1286,7 +1358,7 @@ section_times.append(plots_3D_time)
 
 # ## Plotting the times taken by each section to profile the code
 
-# In[55]:
+# In[ ]:
 
 
 plt.figure()
@@ -1307,13 +1379,13 @@ plt.pie(pie_time, labels = pie_name)
 plt.title('Computation Times per Section')
 
 
-# In[56]:
+# In[ ]:
 
 
 print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \n')
 
 
-# In[57]:
+# In[ ]:
 
 
 #Uncomment to close all figures so it doesnt take up all the memory
@@ -1322,7 +1394,7 @@ print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \
 
 # # Other instance of main solver to either compare solutions or explore parameter space etc.
 
-# In[58]:
+# In[ ]:
 
 
 def compare_solutions(PDE_List, max_value, variable_name, samples, variable_title, title_units):
@@ -1432,7 +1504,7 @@ def compare_solutions(PDE_List, max_value, variable_name, samples, variable_titl
 
 # ## First, we compare the three interpolation functions (deep, simple, standard) for some different mass distributions.
 
-# In[59]:
+# In[ ]:
 
 
 #Lists of same source, different weak form.
