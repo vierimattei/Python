@@ -106,13 +106,13 @@ parameters['krylov_solver']['nonzero_initial_guess'] = True
 parameters['ghost_mode'] = 'none'
 
 
-# In[2]:
+# In[ ]:
 
 
 # info(parameters,True)
 
 
-# In[3]:
+# In[ ]:
 
 
 ## starting time of whole PDE solver
@@ -138,7 +138,115 @@ print('Mesh generated in {} s \n'.format(mesh_generation_time.time))
 print(f'The mesh of process {rank} has {mesh.num_cells()} cells')
 
 
-# In[4]:
+# # Producing timing plot for mesh for Thesis
+
+# In[2]:
+
+
+if plots_for_thesis:
+
+    #empty array to store mesh times
+    mesh_times = []
+
+    #range of nesh reoslutions to test
+    resolutions_to_test = np.arange(10,42,2)
+
+    #Number of cells per mesh tested
+    mesh_test_cells = np.zeros((len(resolutions_to_test), ))
+
+    #Number of vertices per mesh tested
+    mesh_test_vertices = np.zeros((len(resolutions_to_test), ))
+
+    #Minimum cell diameter
+    mesh_test_minimum_diameter = np.zeros((len(resolutions_to_test), ))
+
+    for i, resolution in enumerate(resolutions_to_test):
+
+        print('Starting mesh generation...\n')
+        mesh_generation_start = time.time()
+
+        #Making mesh from function defined above
+        mesh = make_spherical_mesh(domain_size, resolution)
+
+        mesh_generation_end = time.time()
+        mesh_generation_time = run_time(mesh_generation_end - mesh_generation_start, f'{int(resolution)}')
+        mesh_times.append(mesh_generation_time)
+
+        #Storing number of cells, vertices and min diameter in respective arrays. #Cells and #Vertices are
+        #scaled by 100, minimum diameter is scaled by the domain size
+        mesh_test_cells[i] = mesh.num_cells()/1000
+        mesh_test_vertices[i] = mesh.num_vertices()/1000
+        mesh_test_minimum_diameter[i] = mesh.hmin()/(domain_size*2)
+
+        print('Mesh generated in {} s \n'.format(mesh_generation_time.time))
+
+
+# In[ ]:
+
+
+
+    
+    #Storing the quantities needed to make the bar chart for the mesh
+    mesh_time_bar = np.zeros((len(resolutions_to_test), ))
+    mesh_resolution_bar = np.zeros((len(resolutions_to_test), ))
+
+    for i, resolution in enumerate(mesh_times):
+
+        mesh_time_bar[i] = resolution.time
+        mesh_resolution_bar[i] = f'{resolution.name}'
+
+    #Bar chart for the time taken to generate mesh
+    fig, mesh_time_chart = plt.subplots(2,2, tight_layout = True)
+
+    mesh_time_chart[0,0].bar(mesh_resolution_bar, mesh_time_bar, color = 'lightgray', edgecolor = 'lightgray')
+    mesh_time_chart[0,0].plot(mesh_resolution_bar, mesh_time_bar, c='r', linestyle = '-')
+
+    plt.grid()
+
+    mesh_time_chart[0,0].set_ylabel('s')
+    mesh_time_chart[0,0].set_title('Generation Time')
+
+    #Plotting quadratic relation on top of the histogram for comparison. Disable new extra y-axis values
+    mesh_time_square = mesh_time_chart[0,0].twinx()
+    mesh_time_square.plot(mesh_resolution_bar, mesh_resolution_bar**3, c='g', linestyle = '--')
+    mesh_time_square.axes.get_yaxis().set_visible(False)
+
+    #Plot for amount of cells, in 1000s of cells
+    mesh_time_chart[0,1].bar(mesh_resolution_bar, mesh_test_cells, color = 'lightgray', edgecolor = 'lightgray')
+    mesh_time_chart[0,1].plot(mesh_resolution_bar, mesh_test_cells, c='r', linestyle = '-')
+
+    mesh_time_chart[0,1].set_ylabel('Cells * $10^3$')
+    mesh_time_chart[0,1].set_title('Amount of Cells')
+
+    mesh_cell_square = mesh_time_chart[0,1].twinx()
+    mesh_cell_square.plot(mesh_resolution_bar, mesh_resolution_bar**3, c='g', linestyle = '--')
+    mesh_time_square.axes.get_yaxis().set_visible(False)
+
+    #Plot for amount of vertices, in 1000s of vertices
+    mesh_time_chart[1,0].bar(mesh_resolution_bar, mesh_test_vertices, color = 'lightgray', edgecolor = 'lightgray')
+    mesh_time_chart[1,0].plot(mesh_resolution_bar, mesh_test_vertices, c='r', linestyle = '-')
+
+    mesh_time_chart[1,0].set_ylabel('Vertices * $10^3$')
+    mesh_time_chart[1,0].set_title('Amount of Vertices')
+
+    mesh_vertex_square = mesh_time_chart[1,0].twinx()
+    mesh_vertex_square.plot(mesh_resolution_bar, mesh_resolution_bar**3, c='g', linestyle = '--')
+    mesh_time_square.axes.get_yaxis().set_visible(False)
+
+    #Plot for smallest diameter, rescaled by the total domain size
+
+    mesh_time_chart[1,1].bar(mesh_resolution_bar, mesh_test_minimum_diameter, color = 'lightgray', edgecolor = 'lightgray')
+    mesh_time_chart[1,1].plot(mesh_resolution_bar, mesh_test_minimum_diameter, c='r', linestyle = '-')
+
+    mesh_time_chart[1,1].set_ylabel('$d_{min}/d_{tot}$')
+    mesh_time_chart[1,1].set_title('Smallest Cell Diameter')
+
+    mesh_diameter_square = mesh_time_chart[1,1].twinx()
+    mesh_diameter_square.plot(mesh_resolution_bar, mesh_resolution_bar**(-1.5), c='g', linestyle = '--')
+    mesh_time_square.axes.get_yaxis().set_visible(False)
+
+
+# In[ ]:
 
 
 # #Defining extremes of main diagonal to obtain side_length*3 cube
@@ -154,7 +262,7 @@ print(f'The mesh of process {rank} has {mesh.num_cells()} cells')
 # mesh = cubic_mesh
 
 
-# In[5]:
+# In[ ]:
 
 
 # mesh_partitioned = MeshPartitioning
@@ -166,7 +274,7 @@ print(f'The mesh of process {rank} has {mesh.num_cells()} cells')
 mesh.bounding_box_tree().compute_first_entity_collision(Point(domain_size, domain_size/2, domain_size/2))
 
 
-# In[6]:
+# In[ ]:
 
 
 if plotting_option:
@@ -184,7 +292,7 @@ if plotting_option:
 
 # ## Defining coordinates for some test mass distributions
 
-# In[7]:
+# In[ ]:
 
 
 #For all the points to be within a given radius, each coordinate must be smaller than
@@ -252,14 +360,14 @@ source_centers = [Point(random_coordinates_x[i], random_coordinates_y[i], random
 # print(f'Mean in z: {abs(mu - np.mean(random_coordinates_z))/domain_size}\n') 
 
 
-# In[8]:
+# In[ ]:
 
 
 # print(f'Random coordinates are:\n {random_coordinates}')
 # print(source_centers[0][1])
 
 
-# In[9]:
+# In[ ]:
 
 
 # for point in source_centers:
@@ -269,7 +377,7 @@ source_centers = [Point(random_coordinates_x[i], random_coordinates_y[i], random
 
 # ## Finding the center of mass for the mass distribution to correctly calculate BCs and initial guesses 
 
-# In[10]:
+# In[ ]:
 
 
 #COMMENTED OUT MOMENTARILY TO TEST HAVING SOURCE IN PLANE!
@@ -297,7 +405,7 @@ center_of_mass = [center_of_mass_x, center_of_mass_y, center_of_mass_z]
 print(f'Process {rank} about to refine')
 
 
-# In[11]:
+# In[ ]:
 
 
 print('Starting mesh refinement...\n')
@@ -314,7 +422,7 @@ print('Mesh refined in {} s \n'.format(mesh_refine_time.time))
 # mesh_file << new_mesh
 
 
-# In[12]:
+# In[ ]:
 
 
 #Trying to save a mesh to a file and then load it from each process so there's no need to broadcast it!
@@ -327,14 +435,14 @@ mesh = new_mesh
 
 # # Gathering all the data from the mesh AFTER having done the mesh refinement and defined the mesh for plotting
 
-# In[13]:
+# In[ ]:
 
 
 # mesh.mpi_comm = comm
 # mesh.mpi_comm
 
 
-# In[14]:
+# In[ ]:
 
 
 print('Rearranging mesh data\n')
@@ -363,7 +471,7 @@ print('Mesh data rearranged in {} s \n'.format(rearrange_time.time))
 
 
 
-# In[15]:
+# In[ ]:
 
 
 # test_string = make_discrete_gauss(10)
@@ -372,7 +480,7 @@ print('Mesh data rearranged in {} s \n'.format(rearrange_time.time))
 
 # # Defining a few BVP from combinations we use often. Naming scheme: 'weak form_source'
 
-# In[16]:
+# In[ ]:
 
 
 #BVPs for a discrete dirac mass distribution, for Newton and MOND with/out interpolations
@@ -402,7 +510,7 @@ mond_standard_beta = BVP(F_MOND_standard, u_sphere_cpp, f_gas_three_beta, 'Stand
 
 # # Taking parameters from the cluster database of Reiprich and Moffat
 
-# In[17]:
+# In[ ]:
 
 
 #All the measurements use a reduced Hubble constant. As the Hubble constant can be expressed in terms
@@ -456,7 +564,7 @@ df['rho_0_frame'] = pd.Series(rho_0_np, index = df.index)
 df.loc[:, 'r_c_frame'] = df.loc[:, 'r_c_frame']/h50
 
 
-# In[18]:
+# In[ ]:
 
 
 #Need to implement this itnegral directly in the Running_Python notebook to figure out what the total
@@ -467,14 +575,14 @@ rho_0*r_c*atan(domain_size/r_c)
 
 # # Trying an alternative method for assigning values inside the c++ expressions by using exec, to avoid the limit on eval!
 
-# In[19]:
+# In[ ]:
 
 
 # test_string = make_source_string(10)
 # test_string
 
 
-# In[20]:
+# In[ ]:
 
 
 #Defining a function for the boundary. Since we only have one BC for the whole boundary, we
@@ -484,7 +592,7 @@ def boundary(x, on_boundary):
     return on_boundary
 
 
-# In[21]:
+# In[ ]:
 
 
 def solve_PDE(the_BVP):
@@ -554,14 +662,14 @@ def solve_PDE(the_BVP):
     return u, f
 
 
-# In[22]:
+# In[ ]:
 
 
 #Waiting for each process to have completed before moving on to solve the PDE
 # MPI.barrier(comm)
 
 
-# In[23]:
+# In[ ]:
 
 
 #Defined the quantity BVP_to_solve in the MONDquantities file as a string, so to use it we need to 
@@ -576,7 +684,7 @@ u, f = solve_PDE(eval(BVP_to_solve))
 
 # ## Finding the values of the function, its gradient and the source at each vertex of the mesh, and the coordinates at each point of the mesh
 
-# In[24]:
+# In[ ]:
 
 
 data_collection_start = time.time()
@@ -679,7 +787,7 @@ print('Data collected in {} s\n'.format(data_collection_time.time))
 
 # # Calculating the Laplacian of the potential to obtain the apparent dark matter distribution.
 
-# In[25]:
+# In[ ]:
 
 
 #The apparent mass distribution is the RHS of the Newtonian Poisson equation. No need to scale it as it
@@ -708,7 +816,7 @@ apparent_mass_distribution_sorted = apparent_mass_distribution[sorting_index]
 
 # # Gathering the potential and coordinate numpy array onto process 0 to have the full solution.
 
-# In[26]:
+# In[ ]:
 
 
 #First, we need to know how many vertices we have in total in the full mesh to preallocate the array
@@ -759,7 +867,7 @@ comm.Gatherv(source, source_total, root = 0)
 comm.Gatherv(apparent_mass_distribution, apparent_mass_total, root = 0)
 
 
-# In[27]:
+# In[ ]:
 
 
 #Now we want to sort as usual, now for the total potential and based on the overall r coordinates
@@ -827,7 +935,7 @@ if rank == 0:
 
 
 
-# In[28]:
+# In[ ]:
 
 
 if rank == 0:
@@ -845,7 +953,7 @@ if rank == 0:
     plt.savefig(f'Figures/total_potential.pdf', bbox_inches='tight')
 
 
-# In[29]:
+# In[ ]:
 
 
 if rank == 0:
@@ -880,7 +988,7 @@ if rank == 0:
 
 # ## Integrating quantitites along a straight line
 
-# In[30]:
+# In[ ]:
 
 
 if lensing_interpolations:
@@ -930,7 +1038,7 @@ if lensing_interpolations:
 
 # ## Defining a function to compute the sum of the individual contributions from the analytic form so we can compare them to the overall solution we get from the PDE
 
-# In[31]:
+# In[ ]:
 
 
 potential_individual_diracs = 0
@@ -943,7 +1051,7 @@ for coordinates in random_coordinates:
     potential_individual_diracs = potential_individual_diracs + sqrt(G*mgb*a0)*np.log(r_coords)
 
 
-# In[32]:
+# In[ ]:
 
 
 potential_individual_sum = sum_individual_contributions(mesh, origin, random_coordinates)
@@ -962,7 +1070,7 @@ plt.scatter(x_coords, potential, s=0.1)
 
 
 
-# In[33]:
+# In[ ]:
 
 
 radial_plots_start = time.time()
@@ -1024,7 +1132,7 @@ potential1_title = f'potential_1_p{rank}'
 
 # ## Finding the error in the potential, radially
 
-# In[34]:
+# In[ ]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -1043,7 +1151,7 @@ plot_format(plot_potential_error,1,1)
 
 # # Looking at the value of the potential along a specific axis. Useful when dealing with a non-radially symmetric distribution
 
-# In[35]:
+# In[ ]:
 
 
 plt.figure()
@@ -1053,7 +1161,7 @@ plt.scatter(x_coords, potential, marker = '.', s = 0.5, c = y_coords/y_coords.ma
 
 # ## Next, the acceleration
 
-# In[36]:
+# In[ ]:
 
 
 #Defining analytic functions to check if the result is correct
@@ -1089,7 +1197,7 @@ plot_format(acceleration1,1,1)
 
 # ## Finding the error in the acceleration
 
-# In[37]:
+# In[ ]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -1106,7 +1214,7 @@ plot_format(acceleration_error_plot,1,1)
 
 # ## Plotting the actual mass distribution that we input in the PDE, correpsonding to the baryonic matter
 
-# In[38]:
+# In[ ]:
 
 
 fig, source_radial_plot = plt.subplots()
@@ -1121,7 +1229,7 @@ plot_format(source_radial_plot,1,1)
 
 # # Plotting the laplacian of the solution, that for MOND corresponds to the total matter distribution, baryons+dark matter. For Newton it should correspond to the mass distribution that we input in the PDE
 
-# In[39]:
+# In[ ]:
 
 
 fig, apparent_mass_plot = plt.subplots()
@@ -1140,7 +1248,7 @@ plot_annotations(apparent_mass_plot)
 plot_format(apparent_mass_plot,1,1)
 
 
-# In[40]:
+# In[ ]:
 
 
 if rank == 0:
@@ -1162,7 +1270,7 @@ if rank == 0:
 
 # # Plotting the difference between the apparent mass distribution obtained as the Laplacian of the solution, and the baryonic mass distribution which is the RHS of the PDE
 
-# In[41]:
+# In[ ]:
 
 
 #The difference between apparent mass and baryonic mass is the dark matter distribution
@@ -1176,7 +1284,7 @@ plot_annotations(dark_matter_density_plot)
 plot_format(dark_matter_density_plot,1,1)
 
 
-# In[42]:
+# In[ ]:
 
 
 #The ratio between apparent mass and baryonic mass is the dark matter distribution
@@ -1195,7 +1303,7 @@ plot_format(dark_matter_ratio_plot,1,1)
 
 # ### Applying the function to the generated mesh
 
-# In[43]:
+# In[ ]:
 
 
 radial_dist_hist(r_sorted, mesh, False, 10)
@@ -1205,7 +1313,7 @@ radial_plots_time = run_time(radial_plots_start - radial_plots_end, 'Radial Plot
 # section_times.append(radial_plots_time)
 
 
-# In[44]:
+# In[ ]:
 
 
 plots_3D_start = time.time()
@@ -1222,7 +1330,7 @@ if plot_3D_graphs:
 
 # ## For non spherically symmetric meshes, and for visual clarity, taking a slice of the mesh and plotting it in 2D
 
-# In[45]:
+# In[ ]:
 
 
 if plot_3D_graphs: 
@@ -1237,7 +1345,7 @@ if plot_3D_graphs:
 
 
 
-# In[46]:
+# In[ ]:
 
 
 if plot_3D_graphs:
@@ -1247,7 +1355,7 @@ if plot_3D_graphs:
     plt.title('Potential in xy-plane')
 
 
-# In[47]:
+# In[ ]:
 
 
 if (plot_3D_graphs and acceleration_needed):  
@@ -1257,7 +1365,7 @@ if (plot_3D_graphs and acceleration_needed):
     plt.title('Acceleration in xy-plane')
 
 
-# In[48]:
+# In[ ]:
 
 
 # trisurf_source = plt.figure()
@@ -1267,7 +1375,7 @@ if (plot_3D_graphs and acceleration_needed):
 
 # ## Plotting contour lines of the potential, so we can do that for different values of z and see the whole domain.
 
-# In[49]:
+# In[ ]:
 
 
 tricontour_potential = plt.figure()
@@ -1275,7 +1383,7 @@ tricontour_function_slice(tricontour_potential, potential, Point(center_of_mass)
 plt.title('Potential in xy-plane')
 
 
-# In[50]:
+# In[ ]:
 
 
 if acceleration_needed:
@@ -1285,7 +1393,7 @@ if acceleration_needed:
     plt.title('Acceleration in xy-plane')
 
 
-# In[51]:
+# In[ ]:
 
 
 tricontour_source = plt.figure()
@@ -1296,7 +1404,7 @@ plt.title('Source in xy-plane')
 # ## Making a function to plot slices and view them in 3D
 # ### The 2 cells below this on contain the call to the function
 
-# In[52]:
+# In[ ]:
 
 
 #IMPORTANT: Right now, using a predefined amount of contours for each level, but this means
@@ -1310,7 +1418,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(potential_slices, potential, 100, 0)
 
 
-# In[53]:
+# In[ ]:
 
 
 # acceleration_slices = plt.figure()
@@ -1318,7 +1426,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(acceleration_slices, acceleration_magnitude, 100, 0)
 
 
-# In[54]:
+# In[ ]:
 
 
 # source_slices = plt.figure()
@@ -1328,7 +1436,7 @@ plt.title('Source in xy-plane')
 
 # ## Looking at a quiver plot of the acceleration (useful when having multiple masses)
 
-# In[55]:
+# In[ ]:
 
 
 figure = plt.figure()
@@ -1338,7 +1446,7 @@ quivers = figure.add_subplot(111, projection='3d')
 quivers.quiver(x_coords, y_coords, z_coords, acceleration_x, acceleration_y, acceleration_z, length=domain_size, normalize = False)
 
 
-# In[56]:
+# In[ ]:
 
 
 plots_3D_end = time.time()
@@ -1348,7 +1456,7 @@ section_times.append(plots_3D_time)
 
 # ## Plotting the times taken by each section to profile the code
 
-# In[57]:
+# In[ ]:
 
 
 plt.figure()
@@ -1369,13 +1477,13 @@ plt.pie(pie_time, labels = pie_name)
 plt.title('Computation Times per Section')
 
 
-# In[58]:
+# In[ ]:
 
 
 print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \n')
 
 
-# In[59]:
+# In[ ]:
 
 
 #Uncomment to close all figures so it doesnt take up all the memory
@@ -1384,7 +1492,7 @@ print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \
 
 # # Other instance of main solver to either compare solutions or explore parameter space etc.
 
-# In[60]:
+# In[ ]:
 
 
 def compare_solutions(PDE_List, max_value, variable_name, samples, variable_title, title_units):
@@ -1494,7 +1602,7 @@ def compare_solutions(PDE_List, max_value, variable_name, samples, variable_titl
 
 # ## First, we compare the three interpolation functions (deep, simple, standard) for some different mass distributions.
 
-# In[61]:
+# In[ ]:
 
 
 #Lists of same source, different weak form.

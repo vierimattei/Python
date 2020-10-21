@@ -81,9 +81,23 @@ r_c = 242.3*kp
 #of meters and kilograms, and 1g/cm^3 = 1000kg/m^3, so need to multiply by 1000. from 10^-25 to 10^-22
 #so this should be in terms of kg/m^3
 rho_0 = 0.06*(10**(-22))
+#All the measurements use a reduced Hubble constant. As the Hubble constant can be expressed in terms
+#of Miglrom's constant and speed of light, we express it as that. I modified a0 = 1.14 * 10**-10 so 
+#that H0 is now very close to the latest (upper) estimate. Now a0 and H0 are consistent.
+H0 = 2*pi*(a0)/c
+#The Hubble constant used is h50, given as H0/50 km/s/Mpc. We need to multiply most of the quantities in
+#the table by this to obtain 
+h50 = H0/(50*10**3/(1000*kp))
+#The size of the domain is the size over which the measurements were carried out. Technically, we should
+#only consider the mass integrated up to r200, where the gas is supposed to have 200 times the critical
+#mass density of the universe. However, the tail should not make a big difference (can check and change
+#the beta density expression if the assumption does not hold). 
+#On the other hand, the total gravitational mass of all systems is calculated within the same radius,
+#the so called Abell radius. We use this as the domain size for all of the clusters.
+radius_abell = 3/h50*1000*kp
 #BVP To be solved: we use a string so we dont need to define the object in here and instead we
 #evaluate it in the main code
-BVP_to_solve = 'mond_standard_dirac'
+BVP_to_solve = 'newton_gauss'
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again
@@ -107,3 +121,5 @@ plot_3D_graphs = False
 #Option to avoid printing redundant information from each core when running the code in parallel from
 #a python (.py) script obtained from the jupyter notebook.
 # parallel_run = True
+#Plots evaluating performance for various parameters in the simulation
+plots_for_thesis = False
