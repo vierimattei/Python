@@ -402,7 +402,7 @@ mond_standard_beta = BVP(F_MOND_standard, u_sphere_cpp, f_gas_three_beta, 'Stand
 
 # # Taking parameters from the cluster database of Reiprich and Moffat
 
-# In[23]:
+# In[17]:
 
 
 #All the measurements use a reduced Hubble constant. As the Hubble constant can be expressed in terms
@@ -456,22 +456,25 @@ df['rho_0_frame'] = pd.Series(rho_0_np, index = df.index)
 df.loc[:, 'r_c_frame'] = df.loc[:, 'r_c_frame']/h50
 
 
-# In[ ]:
+# In[18]:
 
 
+#Need to implement this itnegral directly in the Running_Python notebook to figure out what the total
+#mass should be!
 
+rho_0*r_c*atan(domain_size/r_c)
 
 
 # # Trying an alternative method for assigning values inside the c++ expressions by using exec, to avoid the limit on eval!
 
-# In[18]:
+# In[19]:
 
 
 # test_string = make_source_string(10)
 # test_string
 
 
-# In[19]:
+# In[20]:
 
 
 #Defining a function for the boundary. Since we only have one BC for the whole boundary, we
@@ -481,7 +484,7 @@ def boundary(x, on_boundary):
     return on_boundary
 
 
-# In[20]:
+# In[21]:
 
 
 def solve_PDE(the_BVP):
@@ -494,7 +497,15 @@ def solve_PDE(the_BVP):
 
     #defining the x,y,z coordinates from the coordinate array in sympy
 #     x, y, z = sym.symbols('x[0], x[1], x[2]')
-
+    
+    #Modifying the total mass to that of the beta distribution if the BVP contains beta
+#     if 'beta' in the_BVP.name:
+        
+#         mgb = (np.trapz(rho_0/(1+(r_sorted/r_c)**2)**(3*beta/2)*4*pi*r_sorted**2,
+#                       x = r_sorted))
+    
+#     print(f'mass/mass_coma is {mgb/mass_coma_gas}')
+    
     #VERY IMPORTANT: If using sympy, use sym. in front of every mathematical operator, or the sym. and UFL (the
     #mathematical syntax used in fenics) collide and an error about UFL conversion appears
     
@@ -543,14 +554,14 @@ def solve_PDE(the_BVP):
     return u, f
 
 
-# In[21]:
+# In[22]:
 
 
 #Waiting for each process to have completed before moving on to solve the PDE
 # MPI.barrier(comm)
 
 
-# In[22]:
+# In[23]:
 
 
 #Defined the quantity BVP_to_solve in the MONDquantities file as a string, so to use it we need to 
@@ -565,7 +576,7 @@ u, f = solve_PDE(eval(BVP_to_solve))
 
 # ## Finding the values of the function, its gradient and the source at each vertex of the mesh, and the coordinates at each point of the mesh
 
-# In[ ]:
+# In[24]:
 
 
 data_collection_start = time.time()
@@ -580,22 +591,6 @@ if plotting_option == True:
     #Calling the rearrange_mesh_data function to get coordinates and order them based on the 
     #distance from the center of mass
 
-#These options that are commented out were an attempt to solve the PDE on a lower degree, then 
-#project it on a higher degree space. Doesnt work very well as you cant project a degree 1 on a degree 2
-#properly. It's essentially asking a quadratic form from a linear form for each element
-# #setting the degree for the function space onto which we want to project the solution 
-# higher_degree = 3
-
-# #Function space for higher_degree
-# V_higher_degree = FunctionSpace(mesh, 'CG', higher_degree)
-
-# #Solution projected over the higher degree function space
-# u_higher_degree = project(u, V_higher_degree)
-
-# #Assigning the higher degree solution to u and doing all calculations with this
-# u = u_higher_degree
-
-
 #The value of the function at each vertex of the mesh is stored in a np array. Its order
 #corresponds to the otder of the mesh.coordinates() values
 potential = u.compute_vertex_values()
@@ -605,11 +600,6 @@ source = 1/(4*pi*G)*f.compute_vertex_values(mesh)
 
 #Getting the degree from the scalar function space V from the PDE
 degree = V.ufl_element().degree()
-
-# #Setting the degree for all projections equal to the degree we use for the projection of the solution
-# #above
-# degree = higher_degree
-
 
 #Laplacian of the solution to get back the scaled mass distribution
 lap = div(grad(u))
@@ -689,7 +679,7 @@ print('Data collected in {} s\n'.format(data_collection_time.time))
 
 # # Calculating the Laplacian of the potential to obtain the apparent dark matter distribution.
 
-# In[ ]:
+# In[25]:
 
 
 #The apparent mass distribution is the RHS of the Newtonian Poisson equation. No need to scale it as it
@@ -718,7 +708,7 @@ apparent_mass_distribution_sorted = apparent_mass_distribution[sorting_index]
 
 # # Gathering the potential and coordinate numpy array onto process 0 to have the full solution.
 
-# In[ ]:
+# In[26]:
 
 
 #First, we need to know how many vertices we have in total in the full mesh to preallocate the array
@@ -769,7 +759,7 @@ comm.Gatherv(source, source_total, root = 0)
 comm.Gatherv(apparent_mass_distribution, apparent_mass_total, root = 0)
 
 
-# In[ ]:
+# In[27]:
 
 
 #Now we want to sort as usual, now for the total potential and based on the overall r coordinates
@@ -837,7 +827,7 @@ if rank == 0:
 
 
 
-# In[ ]:
+# In[28]:
 
 
 if rank == 0:
@@ -855,7 +845,7 @@ if rank == 0:
     plt.savefig(f'Figures/total_potential.pdf', bbox_inches='tight')
 
 
-# In[ ]:
+# In[29]:
 
 
 if rank == 0:
@@ -890,7 +880,7 @@ if rank == 0:
 
 # ## Integrating quantitites along a straight line
 
-# In[ ]:
+# In[30]:
 
 
 if lensing_interpolations:
@@ -940,7 +930,7 @@ if lensing_interpolations:
 
 # ## Defining a function to compute the sum of the individual contributions from the analytic form so we can compare them to the overall solution we get from the PDE
 
-# In[ ]:
+# In[31]:
 
 
 potential_individual_diracs = 0
@@ -953,7 +943,7 @@ for coordinates in random_coordinates:
     potential_individual_diracs = potential_individual_diracs + sqrt(G*mgb*a0)*np.log(r_coords)
 
 
-# In[ ]:
+# In[32]:
 
 
 potential_individual_sum = sum_individual_contributions(mesh, origin, random_coordinates)
@@ -972,7 +962,7 @@ plt.scatter(x_coords, potential, s=0.1)
 
 
 
-# In[ ]:
+# In[33]:
 
 
 radial_plots_start = time.time()
@@ -1034,7 +1024,7 @@ potential1_title = f'potential_1_p{rank}'
 
 # ## Finding the error in the potential, radially
 
-# In[ ]:
+# In[34]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -1053,7 +1043,7 @@ plot_format(plot_potential_error,1,1)
 
 # # Looking at the value of the potential along a specific axis. Useful when dealing with a non-radially symmetric distribution
 
-# In[ ]:
+# In[35]:
 
 
 plt.figure()
@@ -1063,7 +1053,7 @@ plt.scatter(x_coords, potential, marker = '.', s = 0.5, c = y_coords/y_coords.ma
 
 # ## Next, the acceleration
 
-# In[ ]:
+# In[36]:
 
 
 #Defining analytic functions to check if the result is correct
@@ -1099,7 +1089,7 @@ plot_format(acceleration1,1,1)
 
 # ## Finding the error in the acceleration
 
-# In[ ]:
+# In[37]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -1116,7 +1106,7 @@ plot_format(acceleration_error_plot,1,1)
 
 # ## Plotting the actual mass distribution that we input in the PDE, correpsonding to the baryonic matter
 
-# In[ ]:
+# In[38]:
 
 
 fig, source_radial_plot = plt.subplots()
@@ -1131,7 +1121,7 @@ plot_format(source_radial_plot,1,1)
 
 # # Plotting the laplacian of the solution, that for MOND corresponds to the total matter distribution, baryons+dark matter. For Newton it should correspond to the mass distribution that we input in the PDE
 
-# In[ ]:
+# In[39]:
 
 
 fig, apparent_mass_plot = plt.subplots()
@@ -1150,7 +1140,7 @@ plot_annotations(apparent_mass_plot)
 plot_format(apparent_mass_plot,1,1)
 
 
-# In[ ]:
+# In[40]:
 
 
 if rank == 0:
@@ -1172,7 +1162,7 @@ if rank == 0:
 
 # # Plotting the difference between the apparent mass distribution obtained as the Laplacian of the solution, and the baryonic mass distribution which is the RHS of the PDE
 
-# In[ ]:
+# In[41]:
 
 
 #The difference between apparent mass and baryonic mass is the dark matter distribution
@@ -1186,7 +1176,7 @@ plot_annotations(dark_matter_density_plot)
 plot_format(dark_matter_density_plot,1,1)
 
 
-# In[ ]:
+# In[42]:
 
 
 #The ratio between apparent mass and baryonic mass is the dark matter distribution
@@ -1205,7 +1195,7 @@ plot_format(dark_matter_ratio_plot,1,1)
 
 # ### Applying the function to the generated mesh
 
-# In[ ]:
+# In[43]:
 
 
 radial_dist_hist(r_sorted, mesh, False, 10)
@@ -1215,7 +1205,7 @@ radial_plots_time = run_time(radial_plots_start - radial_plots_end, 'Radial Plot
 # section_times.append(radial_plots_time)
 
 
-# In[ ]:
+# In[44]:
 
 
 plots_3D_start = time.time()
@@ -1232,7 +1222,7 @@ if plot_3D_graphs:
 
 # ## For non spherically symmetric meshes, and for visual clarity, taking a slice of the mesh and plotting it in 2D
 
-# In[ ]:
+# In[45]:
 
 
 if plot_3D_graphs: 
@@ -1247,7 +1237,7 @@ if plot_3D_graphs:
 
 
 
-# In[ ]:
+# In[46]:
 
 
 if plot_3D_graphs:
@@ -1257,7 +1247,7 @@ if plot_3D_graphs:
     plt.title('Potential in xy-plane')
 
 
-# In[ ]:
+# In[47]:
 
 
 if (plot_3D_graphs and acceleration_needed):  
@@ -1267,7 +1257,7 @@ if (plot_3D_graphs and acceleration_needed):
     plt.title('Acceleration in xy-plane')
 
 
-# In[ ]:
+# In[48]:
 
 
 # trisurf_source = plt.figure()
@@ -1277,7 +1267,7 @@ if (plot_3D_graphs and acceleration_needed):
 
 # ## Plotting contour lines of the potential, so we can do that for different values of z and see the whole domain.
 
-# In[ ]:
+# In[49]:
 
 
 tricontour_potential = plt.figure()
@@ -1285,7 +1275,7 @@ tricontour_function_slice(tricontour_potential, potential, Point(center_of_mass)
 plt.title('Potential in xy-plane')
 
 
-# In[ ]:
+# In[50]:
 
 
 if acceleration_needed:
@@ -1295,7 +1285,7 @@ if acceleration_needed:
     plt.title('Acceleration in xy-plane')
 
 
-# In[ ]:
+# In[51]:
 
 
 tricontour_source = plt.figure()
@@ -1306,7 +1296,7 @@ plt.title('Source in xy-plane')
 # ## Making a function to plot slices and view them in 3D
 # ### The 2 cells below this on contain the call to the function
 
-# In[ ]:
+# In[52]:
 
 
 #IMPORTANT: Right now, using a predefined amount of contours for each level, but this means
@@ -1320,7 +1310,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(potential_slices, potential, 100, 0)
 
 
-# In[ ]:
+# In[53]:
 
 
 # acceleration_slices = plt.figure()
@@ -1328,7 +1318,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(acceleration_slices, acceleration_magnitude, 100, 0)
 
 
-# In[ ]:
+# In[54]:
 
 
 # source_slices = plt.figure()
@@ -1338,7 +1328,7 @@ plt.title('Source in xy-plane')
 
 # ## Looking at a quiver plot of the acceleration (useful when having multiple masses)
 
-# In[ ]:
+# In[55]:
 
 
 figure = plt.figure()
@@ -1348,7 +1338,7 @@ quivers = figure.add_subplot(111, projection='3d')
 quivers.quiver(x_coords, y_coords, z_coords, acceleration_x, acceleration_y, acceleration_z, length=domain_size, normalize = False)
 
 
-# In[ ]:
+# In[56]:
 
 
 plots_3D_end = time.time()
@@ -1358,7 +1348,7 @@ section_times.append(plots_3D_time)
 
 # ## Plotting the times taken by each section to profile the code
 
-# In[ ]:
+# In[57]:
 
 
 plt.figure()
@@ -1379,13 +1369,13 @@ plt.pie(pie_time, labels = pie_name)
 plt.title('Computation Times per Section')
 
 
-# In[ ]:
+# In[58]:
 
 
 print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \n')
 
 
-# In[ ]:
+# In[59]:
 
 
 #Uncomment to close all figures so it doesnt take up all the memory
@@ -1394,7 +1384,7 @@ print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \
 
 # # Other instance of main solver to either compare solutions or explore parameter space etc.
 
-# In[ ]:
+# In[60]:
 
 
 def compare_solutions(PDE_List, max_value, variable_name, samples, variable_title, title_units):
@@ -1504,7 +1494,7 @@ def compare_solutions(PDE_List, max_value, variable_name, samples, variable_titl
 
 # ## First, we compare the three interpolation functions (deep, simple, standard) for some different mass distributions.
 
-# In[ ]:
+# In[61]:
 
 
 #Lists of same source, different weak form.
