@@ -65,7 +65,7 @@ beta_GEA = 6/sqrt(2+c_2)
 plot_resolution = mesh_resolution
 #Size of the mesh for plotting. Should be bigger than the normal one or some points might be outside its domain
 mesh_plot_size = domain_size*0.8
-refine_times = 10
+refine_times = 0
 p = 1*kp
 source_number = 1
 source_mass = mgb/source_number
@@ -97,7 +97,7 @@ h50 = H0/(50*10**3/(1000*kp))
 radius_abell = 3/h50*1000*kp
 #BVP To be solved: we use a string so we dont need to define the object in here and instead we
 #evaluate it in the main code
-BVP_to_solve = 'mond_deep_gauss'
+BVP_to_solve = 'mond_deep_dirac'
 #IMPORTANT!!! It might be that interpolating on a linear space makes all derivatives disappear:
 #https://fenicsproject.org/qa/9893/simple-question-about-derivation/
 #However, I should be fine cause I do the derivative, then interpolate it on a linear space and do it again
