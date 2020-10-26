@@ -3,7 +3,7 @@
 
 # # Defining all the constants required (copying them from Matlab and adjusting syntax)
 
-# In[1]:
+# In[ ]:
 
 
 from dolfin import *
@@ -99,7 +99,7 @@ parameters["form_compiler"]["optimize"]     = True
 parameters["form_compiler"]["cpp_optimize"] = True
 
 #Nonzero initial guess for the Krylov solver. Doesnt seem to make a difference for nonlinear problems
-parameters['krylov_solver']['nonzero_initial_guess'] = True
+# parameters['krylov_solver']['nonzero_initial_guess'] = True
 
 #Ghost mode for when using MPI. Each process gets ghost vertices for the part of the domain it does not
 #own. Have to set to 'none' instead or I get Error 'Unable to create BoundaryMesh with ghost cells.'
@@ -127,6 +127,13 @@ for i in range(1):
     r_c = cluster_rc[i]
     rho_0 = cluster_rho0[i]
     beta = cluster_beta[i]
+    
+    #Making a dummy variable going from 0 to the domain_size to get the total mass by integrating the beta
+    #gas density over the whole domain
+    r_integration = np.linspace(0,domain_size,10000)
+
+    mgb = (np.trapz(rho_0/(1+(r_integration/r_c)**2)**(3*beta/2)*
+                          4*pi*r_integration**2, x = r_integration))
     
     ## starting time of whole PDE solver
     starting_time = time.time()
@@ -541,15 +548,64 @@ for i in range(1):
         discrete_list = compare_solutions(BVP_dirac_list, stand_dev, 'stand_dev', 1, '\sigma = ', 'Mpc')
 
 
+# In[ ]:
+
+
+# potential_total_sorted = np.load(f'database_results/{cluster_name[0]}/potential_{cluster_name[0]}.npy')
+# source_total_sorted = np.load(f'database_results/{cluster_name[0]}/source_{cluster_name[0]}.npy')
+# apparent_mass_total_sorted = np.load(f'database_results/{cluster_name[0]}/apparent_{cluster_name[0]}.npy')
+# dark_mass_total_sorted = np.load(f'database_results/{cluster_name[0]}/dark_mass_{cluster_name[0]}.npy')
+# x_total_sorted = np.load(f'database_results/{cluster_name[0]}/x_sorted_{cluster_name[0]}.npy')
+# y_total_sorted = np.load(f'database_results/{cluster_name[0]}/y_sorted_{cluster_name[0]}.npy')
+# z_total_sorted = np.load(f'database_results/{cluster_name[0]}/z_sorted_{cluster_name[0]}.npy')
+# r_total_sorted = np.load(f'database_results/{cluster_name[0]}/r_sorted_{cluster_name[0]}.npy')
+
+
+# In[ ]:
+
+
+# #Analytic potential for a MOND homogeneous sphere. Adding MOND potential at boundary for the offset
+# potential_sphere_MOND = (np.heaviside(r_total_sorted - radius_tot, 0.5)*sqrt(G*mgb*a0)*np.log(r_total_sorted) +
+# (np.heaviside(radius_tot - r_total_sorted, 0.5))*(4/3*sqrt(pi/3*a0*G*mgb/volume_out)*np.power(r_total_sorted,3/2)+
+# sqrt(G*mgb*a0)*ln(radius_tot) - 4/3*sqrt(pi/3*a0*G*mgb/volume_out)*radius_tot**(3/2)))
+
+# #Potential for a homogeneous sphere in Newton
+# potential_sphere_Newton = (np.heaviside(r_total_sorted - radius_tot, 0.5)*(-G*mgb/r_total_sorted) +
+# (np.heaviside(radius_tot - r_total_sorted, 0.5))*G*mgb/(2*radius_tot**3)*(r_total_sorted**2-
+# 3*radius_tot**2)+sqrt(G*mgb*a0)*ln(domain_size))
+
+
+# plt.figure()
+
+# plt.plot(r_total_sorted, potential_total_sorted)
+# plt.plot(r_total_sorted, potential_sphere_Newton, linestyle = '--')
+
+
+# In[ ]:
+
+
+# plt.figure()
+
+# plt.plot(r_total_sorted, source_total_sorted)
+
+
+# In[1]:
+
+
+#array to check all quantities are finite
+# is_finite = np.zeros((8,))
+
+# #Checking if all arrays have finite values only
+# for i, element in enumerate([potential_total_sorted, source_total_sorted, apparent_mass_total_sorted,
+#                 dark_mass_total_sorted, x_total_sorted, y_total_sorted, z_total_sorted,r_total_sorted]):
+    
+#     is_finite[i] = np.isfinite(element).any()
+    
+# print(f'The finite arrays: {is_finite}')
+
+
 # In[2]:
 
 
-(cluster_rc/mesh.hmin()).min()
-rho_0
 
-
-# In[3]:
-
-
-df
 

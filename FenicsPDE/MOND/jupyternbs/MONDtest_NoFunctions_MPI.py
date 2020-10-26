@@ -3,7 +3,7 @@
 
 # # Defining all the constants required (copying them from Matlab and adjusting syntax)
 
-# In[1]:
+# In[73]:
 
 
 from dolfin import *
@@ -74,9 +74,6 @@ from mpl_toolkits.mplot3d import Axes3D
 #calculating the jacobian for the lensing
 from decimal import *
 
-#Importing all quantities, constants etc used in the calculations
-from MONDquantities import *
-
 #Importing all classes I created
 from MONDclasses import *
 
@@ -85,6 +82,20 @@ from MONDfunctions import *
 
 #Importing all expressions for weak forms, initial guesses/BCs and sources
 from MONDexpressions import *
+
+#Importing all quantities, constants etc used in the calculations
+from MONDquantities_For_Plots import *
+
+from matplotlib.font_manager import FontProperties
+
+# font = FontProperties()
+# font.set_family('serif')
+# font.set_name('Times New Roman')
+# font.set_style('italic')
+
+#Changing the font for the figures to match that of Latex
+plt.rcParams['mathtext.fontset'] = 'cm'
+plt.rcParams['mathtext.rm'] = 'serif'
 
 #Needed if want to use the adapt function for mesh refinement, see:
 #https://fenicsproject.org/qa/6719/using-adapt-on-a-meshfunction-looking-for-a-working-example/
@@ -106,13 +117,13 @@ parameters['krylov_solver']['nonzero_initial_guess'] = True
 parameters['ghost_mode'] = 'none'
 
 
-# In[ ]:
+# In[2]:
 
 
 # info(parameters,True)
 
 
-# In[ ]:
+# In[3]:
 
 
 ## starting time of whole PDE solver
@@ -140,7 +151,7 @@ print(f'The mesh of process {rank} has {mesh.num_cells()} cells')
 
 # # Producing timing plot for mesh for Thesis
 
-# In[2]:
+# In[4]:
 
 
 if plots_for_thesis:
@@ -181,10 +192,18 @@ if plots_for_thesis:
         print('Mesh generated in {} s \n'.format(mesh_generation_time.time))
 
 
-# In[ ]:
+# In[74]:
 
 
+# resolutions_to_test
 
+
+# In[71]:
+
+
+if plots_for_thesis:
+    
+    latex_font = {'fontname':'Comic Sans MS'}
     
     #Storing the quantities needed to make the bar chart for the mesh
     mesh_time_bar = np.zeros((len(resolutions_to_test), ))
@@ -196,57 +215,85 @@ if plots_for_thesis:
         mesh_resolution_bar[i] = f'{resolution.name}'
 
     #Bar chart for the time taken to generate mesh
-    fig, mesh_time_chart = plt.subplots(2,2, tight_layout = True)
+    fig, mesh_time_chart = plt.subplots(2,2, sharex = True)
+    
+    #Setting tight layout with explict rectangle coordinates, so the overall title and legend don't 
+    #overlap with those from each subplot
+    fig.tight_layout(rect=[0, 0.07, 1, 0.9])
 
-    mesh_time_chart[0,0].bar(mesh_resolution_bar, mesh_time_bar, color = 'lightgray', edgecolor = 'lightgray')
-    mesh_time_chart[0,0].plot(mesh_resolution_bar, mesh_time_bar, c='r', linestyle = '-')
+    mesh_time_chart[0,0].bar(mesh_resolution_bar, mesh_time_bar, color = 'lightgray',
+                             edgecolor = 'lightgray')
+    mesh_time_chart[0,0].plot(mesh_resolution_bar, mesh_time_bar, c='r', linestyle = '-',
+                             label = 'FEM')
 
-    plt.grid()
+    mesh_time_chart[0,0].grid()
 
     mesh_time_chart[0,0].set_ylabel('s')
-    mesh_time_chart[0,0].set_title('Generation Time')
-
+    mesh_time_chart[0,0].set_xlabel('$marm$')
+    mesh_time_chart[0,0].set_title(r'Generation Time', fontsize=10, fontname="computer modern")
+    
     #Plotting quadratic relation on top of the histogram for comparison. Disable new extra y-axis values
     mesh_time_square = mesh_time_chart[0,0].twinx()
-    mesh_time_square.plot(mesh_resolution_bar, mesh_resolution_bar**3, c='g', linestyle = '--')
+    mesh_time_square.plot(mesh_resolution_bar, mesh_resolution_bar**3, c='g', linestyle = '--',
+                         label = r'$\propto \alpha^3$')
     mesh_time_square.axes.get_yaxis().set_visible(False)
-
+    
+#     together_00 = mesh_time_chart[0,0]+mesh_time_square
+#     labs = [l.get_label() for l in together_00]
+#     ax.legend(together_00, labs, loc=0)
+    
+#     mesh_time_chart[0,0].legend()
+#     mesh_time_square.legend(loc=0)
+    
     #Plot for amount of cells, in 1000s of cells
-    mesh_time_chart[0,1].bar(mesh_resolution_bar, mesh_test_cells, color = 'lightgray', edgecolor = 'lightgray')
+    mesh_time_chart[0,1].bar(mesh_resolution_bar, mesh_test_cells, color = 'lightgray',
+                             edgecolor = 'lightgray')
     mesh_time_chart[0,1].plot(mesh_resolution_bar, mesh_test_cells, c='r', linestyle = '-')
 
-    mesh_time_chart[0,1].set_ylabel('Cells * $10^3$')
-    mesh_time_chart[0,1].set_title('Amount of Cells')
+    mesh_time_chart[0,1].grid()
+    
+    mesh_time_chart[0,1].set_ylabel(r'Cells * $10^3$')
+    mesh_time_chart[0,1].set_title(r'Cell Number', fontsize=10)
 
     mesh_cell_square = mesh_time_chart[0,1].twinx()
     mesh_cell_square.plot(mesh_resolution_bar, mesh_resolution_bar**3, c='g', linestyle = '--')
-    mesh_time_square.axes.get_yaxis().set_visible(False)
+    mesh_cell_square.axes.get_yaxis().set_visible(False)
 
     #Plot for amount of vertices, in 1000s of vertices
-    mesh_time_chart[1,0].bar(mesh_resolution_bar, mesh_test_vertices, color = 'lightgray', edgecolor = 'lightgray')
+    mesh_time_chart[1,0].bar(mesh_resolution_bar, mesh_test_vertices, color = 'lightgray',
+                             edgecolor = 'lightgray')
     mesh_time_chart[1,0].plot(mesh_resolution_bar, mesh_test_vertices, c='r', linestyle = '-')
-
-    mesh_time_chart[1,0].set_ylabel('Vertices * $10^3$')
-    mesh_time_chart[1,0].set_title('Amount of Vertices')
+    
+    mesh_time_chart[1,0].grid()
+    
+    mesh_time_chart[1,0].set_ylabel(r'Vertices * $10^3$')
+    mesh_time_chart[1,0].set_title(r'Vertex Number', fontsize=10)
 
     mesh_vertex_square = mesh_time_chart[1,0].twinx()
     mesh_vertex_square.plot(mesh_resolution_bar, mesh_resolution_bar**3, c='g', linestyle = '--')
-    mesh_time_square.axes.get_yaxis().set_visible(False)
+    mesh_vertex_square.axes.get_yaxis().set_visible(False)
 
     #Plot for smallest diameter, rescaled by the total domain size
 
-    mesh_time_chart[1,1].bar(mesh_resolution_bar, mesh_test_minimum_diameter, color = 'lightgray', edgecolor = 'lightgray')
+    mesh_time_chart[1,1].bar(mesh_resolution_bar, mesh_test_minimum_diameter, color = 'lightgray',
+                             edgecolor = 'lightgray')
     mesh_time_chart[1,1].plot(mesh_resolution_bar, mesh_test_minimum_diameter, c='r', linestyle = '-')
 
-    mesh_time_chart[1,1].set_ylabel('$d_{min}/d_{tot}$')
-    mesh_time_chart[1,1].set_title('Smallest Cell Diameter')
+    mesh_time_chart[1,1].grid()
+    
+    mesh_time_chart[1,1].set_ylabel(r'$d_{min}/d_{tot}$')
+    mesh_time_chart[1,1].set_title(r'Smallest Cell Diameter', fontsize=10)
 
     mesh_diameter_square = mesh_time_chart[1,1].twinx()
-    mesh_diameter_square.plot(mesh_resolution_bar, mesh_resolution_bar**(-1.5), c='g', linestyle = '--')
-    mesh_time_square.axes.get_yaxis().set_visible(False)
+    mesh_diameter_square.plot(mesh_resolution_bar, mesh_resolution_bar**(-1), c='b', linestyle = '--',
+                             label = r'$\propto \alpha ^{-1}$')
+    mesh_diameter_square.axes.get_yaxis().set_visible(False)
+    
+    fig.suptitle('egeg', **latex_font)
+    plt.figlegend(ncol=3, loc = 'lower center')
 
 
-# In[ ]:
+# In[7]:
 
 
 # #Defining extremes of main diagonal to obtain side_length*3 cube
@@ -262,7 +309,7 @@ if plots_for_thesis:
 # mesh = cubic_mesh
 
 
-# In[ ]:
+# In[8]:
 
 
 # mesh_partitioned = MeshPartitioning
@@ -274,7 +321,7 @@ if plots_for_thesis:
 mesh.bounding_box_tree().compute_first_entity_collision(Point(domain_size, domain_size/2, domain_size/2))
 
 
-# In[ ]:
+# In[9]:
 
 
 if plotting_option:
@@ -292,7 +339,7 @@ if plotting_option:
 
 # ## Defining coordinates for some test mass distributions
 
-# In[ ]:
+# In[10]:
 
 
 #For all the points to be within a given radius, each coordinate must be smaller than
@@ -360,14 +407,14 @@ source_centers = [Point(random_coordinates_x[i], random_coordinates_y[i], random
 # print(f'Mean in z: {abs(mu - np.mean(random_coordinates_z))/domain_size}\n') 
 
 
-# In[ ]:
+# In[11]:
 
 
 # print(f'Random coordinates are:\n {random_coordinates}')
 # print(source_centers[0][1])
 
 
-# In[ ]:
+# In[12]:
 
 
 # for point in source_centers:
@@ -377,7 +424,7 @@ source_centers = [Point(random_coordinates_x[i], random_coordinates_y[i], random
 
 # ## Finding the center of mass for the mass distribution to correctly calculate BCs and initial guesses 
 
-# In[ ]:
+# In[13]:
 
 
 #COMMENTED OUT MOMENTARILY TO TEST HAVING SOURCE IN PLANE!
@@ -405,7 +452,7 @@ center_of_mass = [center_of_mass_x, center_of_mass_y, center_of_mass_z]
 print(f'Process {rank} about to refine')
 
 
-# In[ ]:
+# In[14]:
 
 
 print('Starting mesh refinement...\n')
@@ -422,7 +469,7 @@ print('Mesh refined in {} s \n'.format(mesh_refine_time.time))
 # mesh_file << new_mesh
 
 
-# In[ ]:
+# In[15]:
 
 
 #Trying to save a mesh to a file and then load it from each process so there's no need to broadcast it!
@@ -435,14 +482,14 @@ mesh = new_mesh
 
 # # Gathering all the data from the mesh AFTER having done the mesh refinement and defined the mesh for plotting
 
-# In[ ]:
+# In[16]:
 
 
 # mesh.mpi_comm = comm
 # mesh.mpi_comm
 
 
-# In[ ]:
+# In[17]:
 
 
 print('Rearranging mesh data\n')
@@ -471,7 +518,7 @@ print('Mesh data rearranged in {} s \n'.format(rearrange_time.time))
 
 
 
-# In[ ]:
+# In[18]:
 
 
 # test_string = make_discrete_gauss(10)
@@ -480,7 +527,7 @@ print('Mesh data rearranged in {} s \n'.format(rearrange_time.time))
 
 # # Defining a few BVP from combinations we use often. Naming scheme: 'weak form_source'
 
-# In[ ]:
+# In[19]:
 
 
 #BVPs for a discrete dirac mass distribution, for Newton and MOND with/out interpolations
@@ -510,7 +557,7 @@ mond_standard_beta = BVP(F_MOND_standard, u_sphere_cpp, f_gas_three_beta, 'Stand
 
 # # Taking parameters from the cluster database of Reiprich and Moffat
 
-# In[ ]:
+# In[20]:
 
 
 #All the measurements use a reduced Hubble constant. As the Hubble constant can be expressed in terms
@@ -528,43 +575,45 @@ h50 = H0/(50*10**3/(1000*kp))
 #in the rho_0 file.
 #In the PhD thesis Reiprich cut the table wrong so they're invisible! Unbelievable
 
-#Importing the text file
-df = pd.read_csv('cluster_database/cluster_data.txt', delimiter='\s+', header = None)
+# #Importing the text file
+# df = pd.read_csv('cluster_database/cluster_data.txt', delimiter='\s+', header = None)
 
-#As the columns have no names in the initial file, we add the names here
-df.columns = ['name', 'beta_frame', 'beta+', 'beta-', 'r_c_frame', 'r_c+', 'r_c-', 'T', 'T+', 'T-',
-              'm5_frame', 'm5+', 'm5-', 'r5', 'r5+', 'r5-', 'm2', 'm2+', 'm2-', 'r2', 'r2+', 'r2-',
-              'mtot_frame', 'ref']
+# #As the columns have no names in the initial file, we add the names here
+# df.columns = ['name', 'beta_frame', 'beta+', 'beta-', 'r_c_frame', 'r_c+', 'r_c-', 'T', 'T+', 'T-',
+#               'm5_frame', 'm5+', 'm5-', 'r5', 'r5+', 'r5-', 'm2', 'm2+', 'm2-', 'r2', 'r2+', 'r2-',
+#               'mtot_frame', 'ref']
 
-# Using readline to open file containing rho_0 values and storing each line in Lines
-file1 = open('cluster_database/rho_0.txt', 'r') 
-Lines = file1.readlines() 
-file1.close()
+# # Using readline to open file containing rho_0 values and storing each line in Lines
+# file1 = open('cluster_database/rho_0.txt', 'r') 
+# Lines = file1.readlines() 
+# file1.close()
 
-#Initialising numpy array to hold the values of rho_0
-rho_0_np = np.zeros((len(Lines),1))
+# #Initialising numpy array to hold the values of rho_0
+# rho_0_np = np.zeros((len(Lines),1))
 
-#Storing the content of each line into the numpy array
-for i, line in enumerate(Lines):
+# #Storing the content of each line into the numpy array
+# for i, line in enumerate(Lines):
     
-    #assigning each line to a member of the rho_0 numpy array
-    rho_0_np[i] = line
+#     #assigning each line to a member of the rho_0 numpy array
+#     rho_0_np[i] = line
 
-#Flattening the array before putting it in the dataframe    
-rho_0_np = rho_0_np[:,0]
-#Adding the rho_0 values to the dataframe
-df['rho_0_frame'] = pd.Series(rho_0_np, index = df.index)
+# #Flattening the array before putting it in the dataframe    
+# rho_0_np = rho_0_np[:,0]
+# #Adding the rho_0 values to the dataframe
+# df['rho_0_frame'] = pd.Series(rho_0_np, index = df.index)
 
-# Displaying the full, uncut database with all parameters
-# with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-#     print(df.head(2))
+# # Displaying the full, uncut database with all parameters
+# # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+# #     print(df.head(2))
     
-#The radii are given in units of kpc/h50. To get them in kpc we need to divide by h50
-#Only one useful for now to be scaled is r_c
-df.loc[:, 'r_c_frame'] = df.loc[:, 'r_c_frame']/h50
+# #The radii are given in units of kpc/h50. To get them in kpc we need to divide by h50
+# #Only one useful for now to be scaled is r_c
+# df.loc[:, 'r_c_frame'] = df.loc[:, 'r_c_frame']/h50
+
+df = pd.read_pickle('cluster_data_pickle.pkl')
 
 
-# In[ ]:
+# In[21]:
 
 
 #Need to implement this itnegral directly in the Running_Python notebook to figure out what the total
@@ -575,14 +624,14 @@ rho_0*r_c*atan(domain_size/r_c)
 
 # # Trying an alternative method for assigning values inside the c++ expressions by using exec, to avoid the limit on eval!
 
-# In[ ]:
+# In[22]:
 
 
 # test_string = make_source_string(10)
 # test_string
 
 
-# In[ ]:
+# In[23]:
 
 
 #Defining a function for the boundary. Since we only have one BC for the whole boundary, we
@@ -592,7 +641,7 @@ def boundary(x, on_boundary):
     return on_boundary
 
 
-# In[ ]:
+# In[24]:
 
 
 def solve_PDE(the_BVP):
@@ -662,14 +711,14 @@ def solve_PDE(the_BVP):
     return u, f
 
 
-# In[ ]:
+# In[25]:
 
 
 #Waiting for each process to have completed before moving on to solve the PDE
 # MPI.barrier(comm)
 
 
-# In[ ]:
+# In[26]:
 
 
 #Defined the quantity BVP_to_solve in the MONDquantities file as a string, so to use it we need to 
@@ -684,7 +733,7 @@ u, f = solve_PDE(eval(BVP_to_solve))
 
 # ## Finding the values of the function, its gradient and the source at each vertex of the mesh, and the coordinates at each point of the mesh
 
-# In[ ]:
+# In[27]:
 
 
 data_collection_start = time.time()
@@ -787,7 +836,7 @@ print('Data collected in {} s\n'.format(data_collection_time.time))
 
 # # Calculating the Laplacian of the potential to obtain the apparent dark matter distribution.
 
-# In[ ]:
+# In[28]:
 
 
 #The apparent mass distribution is the RHS of the Newtonian Poisson equation. No need to scale it as it
@@ -816,7 +865,7 @@ apparent_mass_distribution_sorted = apparent_mass_distribution[sorting_index]
 
 # # Gathering the potential and coordinate numpy array onto process 0 to have the full solution.
 
-# In[ ]:
+# In[29]:
 
 
 #First, we need to know how many vertices we have in total in the full mesh to preallocate the array
@@ -867,7 +916,7 @@ comm.Gatherv(source, source_total, root = 0)
 comm.Gatherv(apparent_mass_distribution, apparent_mass_total, root = 0)
 
 
-# In[ ]:
+# In[30]:
 
 
 #Now we want to sort as usual, now for the total potential and based on the overall r coordinates
@@ -935,7 +984,7 @@ if rank == 0:
 
 
 
-# In[ ]:
+# In[31]:
 
 
 if rank == 0:
@@ -953,7 +1002,7 @@ if rank == 0:
     plt.savefig(f'Figures/total_potential.pdf', bbox_inches='tight')
 
 
-# In[ ]:
+# In[32]:
 
 
 if rank == 0:
@@ -988,7 +1037,7 @@ if rank == 0:
 
 # ## Integrating quantitites along a straight line
 
-# In[ ]:
+# In[33]:
 
 
 if lensing_interpolations:
@@ -1038,7 +1087,7 @@ if lensing_interpolations:
 
 # ## Defining a function to compute the sum of the individual contributions from the analytic form so we can compare them to the overall solution we get from the PDE
 
-# In[ ]:
+# In[34]:
 
 
 potential_individual_diracs = 0
@@ -1051,7 +1100,7 @@ for coordinates in random_coordinates:
     potential_individual_diracs = potential_individual_diracs + sqrt(G*mgb*a0)*np.log(r_coords)
 
 
-# In[ ]:
+# In[35]:
 
 
 potential_individual_sum = sum_individual_contributions(mesh, origin, random_coordinates)
@@ -1070,7 +1119,7 @@ plt.scatter(x_coords, potential, s=0.1)
 
 
 
-# In[ ]:
+# In[36]:
 
 
 radial_plots_start = time.time()
@@ -1132,7 +1181,7 @@ potential1_title = f'potential_1_p{rank}'
 
 # ## Finding the error in the potential, radially
 
-# In[ ]:
+# In[37]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -1151,7 +1200,7 @@ plot_format(plot_potential_error,1,1)
 
 # # Looking at the value of the potential along a specific axis. Useful when dealing with a non-radially symmetric distribution
 
-# In[ ]:
+# In[38]:
 
 
 plt.figure()
@@ -1161,7 +1210,7 @@ plt.scatter(x_coords, potential, marker = '.', s = 0.5, c = y_coords/y_coords.ma
 
 # ## Next, the acceleration
 
-# In[ ]:
+# In[39]:
 
 
 #Defining analytic functions to check if the result is correct
@@ -1197,7 +1246,7 @@ plot_format(acceleration1,1,1)
 
 # ## Finding the error in the acceleration
 
-# In[ ]:
+# In[40]:
 
 
 #for spherically symmetric mass distributions we have the anlytic solution, so we can compute
@@ -1214,7 +1263,7 @@ plot_format(acceleration_error_plot,1,1)
 
 # ## Plotting the actual mass distribution that we input in the PDE, correpsonding to the baryonic matter
 
-# In[ ]:
+# In[41]:
 
 
 fig, source_radial_plot = plt.subplots()
@@ -1229,7 +1278,7 @@ plot_format(source_radial_plot,1,1)
 
 # # Plotting the laplacian of the solution, that for MOND corresponds to the total matter distribution, baryons+dark matter. For Newton it should correspond to the mass distribution that we input in the PDE
 
-# In[ ]:
+# In[42]:
 
 
 fig, apparent_mass_plot = plt.subplots()
@@ -1248,7 +1297,7 @@ plot_annotations(apparent_mass_plot)
 plot_format(apparent_mass_plot,1,1)
 
 
-# In[ ]:
+# In[43]:
 
 
 if rank == 0:
@@ -1270,7 +1319,7 @@ if rank == 0:
 
 # # Plotting the difference between the apparent mass distribution obtained as the Laplacian of the solution, and the baryonic mass distribution which is the RHS of the PDE
 
-# In[ ]:
+# In[44]:
 
 
 #The difference between apparent mass and baryonic mass is the dark matter distribution
@@ -1284,7 +1333,7 @@ plot_annotations(dark_matter_density_plot)
 plot_format(dark_matter_density_plot,1,1)
 
 
-# In[ ]:
+# In[45]:
 
 
 #The ratio between apparent mass and baryonic mass is the dark matter distribution
@@ -1303,7 +1352,7 @@ plot_format(dark_matter_ratio_plot,1,1)
 
 # ### Applying the function to the generated mesh
 
-# In[ ]:
+# In[46]:
 
 
 radial_dist_hist(r_sorted, mesh, False, 10)
@@ -1313,7 +1362,7 @@ radial_plots_time = run_time(radial_plots_start - radial_plots_end, 'Radial Plot
 # section_times.append(radial_plots_time)
 
 
-# In[ ]:
+# In[47]:
 
 
 plots_3D_start = time.time()
@@ -1330,7 +1379,7 @@ if plot_3D_graphs:
 
 # ## For non spherically symmetric meshes, and for visual clarity, taking a slice of the mesh and plotting it in 2D
 
-# In[ ]:
+# In[48]:
 
 
 if plot_3D_graphs: 
@@ -1345,7 +1394,7 @@ if plot_3D_graphs:
 
 
 
-# In[ ]:
+# In[49]:
 
 
 if plot_3D_graphs:
@@ -1355,7 +1404,7 @@ if plot_3D_graphs:
     plt.title('Potential in xy-plane')
 
 
-# In[ ]:
+# In[50]:
 
 
 if (plot_3D_graphs and acceleration_needed):  
@@ -1365,7 +1414,7 @@ if (plot_3D_graphs and acceleration_needed):
     plt.title('Acceleration in xy-plane')
 
 
-# In[ ]:
+# In[51]:
 
 
 # trisurf_source = plt.figure()
@@ -1375,7 +1424,7 @@ if (plot_3D_graphs and acceleration_needed):
 
 # ## Plotting contour lines of the potential, so we can do that for different values of z and see the whole domain.
 
-# In[ ]:
+# In[75]:
 
 
 tricontour_potential = plt.figure()
@@ -1383,7 +1432,7 @@ tricontour_function_slice(tricontour_potential, potential, Point(center_of_mass)
 plt.title('Potential in xy-plane')
 
 
-# In[ ]:
+# In[53]:
 
 
 if acceleration_needed:
@@ -1393,7 +1442,7 @@ if acceleration_needed:
     plt.title('Acceleration in xy-plane')
 
 
-# In[ ]:
+# In[54]:
 
 
 tricontour_source = plt.figure()
@@ -1404,7 +1453,7 @@ plt.title('Source in xy-plane')
 # ## Making a function to plot slices and view them in 3D
 # ### The 2 cells below this on contain the call to the function
 
-# In[ ]:
+# In[55]:
 
 
 #IMPORTANT: Right now, using a predefined amount of contours for each level, but this means
@@ -1418,7 +1467,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(potential_slices, potential, 100, 0)
 
 
-# In[ ]:
+# In[56]:
 
 
 # acceleration_slices = plt.figure()
@@ -1426,7 +1475,7 @@ plt.title('Source in xy-plane')
 # contour_3D_slices(acceleration_slices, acceleration_magnitude, 100, 0)
 
 
-# In[ ]:
+# In[57]:
 
 
 # source_slices = plt.figure()
@@ -1436,7 +1485,7 @@ plt.title('Source in xy-plane')
 
 # ## Looking at a quiver plot of the acceleration (useful when having multiple masses)
 
-# In[ ]:
+# In[58]:
 
 
 figure = plt.figure()
@@ -1446,7 +1495,7 @@ quivers = figure.add_subplot(111, projection='3d')
 quivers.quiver(x_coords, y_coords, z_coords, acceleration_x, acceleration_y, acceleration_z, length=domain_size, normalize = False)
 
 
-# In[ ]:
+# In[59]:
 
 
 plots_3D_end = time.time()
@@ -1456,7 +1505,7 @@ section_times.append(plots_3D_time)
 
 # ## Plotting the times taken by each section to profile the code
 
-# In[ ]:
+# In[60]:
 
 
 plt.figure()
@@ -1477,13 +1526,13 @@ plt.pie(pie_time, labels = pie_name)
 plt.title('Computation Times per Section')
 
 
-# In[ ]:
+# In[61]:
 
 
 print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \n')
 
 
-# In[ ]:
+# In[62]:
 
 
 #Uncomment to close all figures so it doesnt take up all the memory
@@ -1492,7 +1541,7 @@ print(f'Overall time taken for process {rank}: {time.time() - starting_time} s \
 
 # # Other instance of main solver to either compare solutions or explore parameter space etc.
 
-# In[ ]:
+# In[63]:
 
 
 def compare_solutions(PDE_List, max_value, variable_name, samples, variable_title, title_units):
@@ -1602,7 +1651,7 @@ def compare_solutions(PDE_List, max_value, variable_name, samples, variable_titl
 
 # ## First, we compare the three interpolation functions (deep, simple, standard) for some different mass distributions.
 
-# In[ ]:
+# In[72]:
 
 
 #Lists of same source, different weak form.

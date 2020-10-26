@@ -951,3 +951,14 @@ def contour_3D_slices(figure, function, amount, height, slices = 50, high_low = 
         plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='z', offset=elevations[0],cmap = 'jet')
     #     plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='x', offset=y_bottom, cmap = 'jet')
     #     plane_trisurf.tricontourf(x_xy_plane, y_xy_plane, function_xy_plane, slices, zdir='y', offset=x_top, cmap = 'jet')
+    
+    
+def space_to_mathrm(string_title):
+    '''Converts a string with spaces to one using \; for use in plots useing mathrm
+    in math mode in latex, \; corresponds to a space, while ' ' has no effect'''
+    
+    string_mathrm = r'$\mathrm{'+string_title+'}$'
+    
+    string_mathrm = string_mathrm.replace(' ', '\;')
+    
+    return string_mathrm
