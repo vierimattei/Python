@@ -43,7 +43,7 @@ mgb = mass_coma_gas
 #Setting domain_size to the radius of the Virgo Cluster, 2.3 Mpc
 domain_size = radius_coma
 #Smallest size of a galaxy in Virgo has a radius = r_Virgo/250, so that's the resolution we need
-radius_tot = domain_size/250
+radius_tot = domain_size/200
 #Origin at (0,0,0) for the mesh
 origin = Point(0,0,0)
 radius_refine = radius_tot

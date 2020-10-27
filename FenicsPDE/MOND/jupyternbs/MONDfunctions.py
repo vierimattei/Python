@@ -171,6 +171,72 @@ def make_cube_mesh(side_length, resolution):
     
     return cubic_mesh
 
+def modified_refinement (mesh, location, radius, how_many, technique = 'inside'):
+    '''Function to refine mesh locally, based on the distance from a given point
+    '''
+    
+    #Starting # cells before we refine, to compute growth factor
+    starting_cells = mesh.num_cells()
+    
+    if how_many > 0:
+    
+        for i in range(how_many):
+        
+            #Declaring Boolean Mesh Function to individuate cell containing point
+            contain_function = MeshFunction("bool", mesh, 3)
+
+            #Setting function to False everywhere
+            contain_function.set_all(False)
+
+            #setting empty array to contain indices of cells containing point
+            cell_index = np.zeros((source_number, 1))
+        
+            for j, source in enumerate(location): 
+                
+                print(f'Source {j+1} of {source_number}', end="\r", flush=True)
+                
+                #IMPORTANT: Need to declare (and set to False) the cell_to_refine function
+                #for each source, as the mesh is different after each iteration!
+                #Initial mesh cell count
+                initial_cells = mesh.num_cells()
+                
+                #List comprehension with a single True corresponding to the cell containing the point
+                contain_list = [cell.contains(source) for cell in cells(mesh)]
+
+                #Converting list to a np array so it's faster (and has 0 and 1 so can be sorted)
+                contain_numpy = np.fromiter(contain_list, float, mesh.num_cells())
+                
+#                 print(f'contain_numpy has {contain_numpy.sum()} ones\n')
+
+                #Getting index of non-zero elements of contain_numpy, only 1 for the cell that's true.
+                #Then setting the MeshFunction True at those cells
+                cell_index[j] = np.nonzero(contain_numpy)[0]
+
+            for cell_containing in cell_index:
+
+                contain_function[cell_containing] = True
+
+            mesh = refine(mesh, contain_function)    
+#             print(f'cell_containing is {cell_containing}')  
+                
+#             #Refining the mesh only where the markers are True, so inside the desired radius 
+#             mesh = refine(mesh, contain_function)
+
+            final_cells = mesh.num_cells()
+
+            partial_growth_factor = final_cells/initial_cells
+            
+            print(('Iteration {} of {}: The Cell number went from {} to {}, up by a factor {}\n'
+                  .format(i+1, how_many, initial_cells, final_cells, partial_growth_factor)))
+    
+        #ratio between # cells at beginning and end of refinement
+        total_growth_factor = final_cells/starting_cells
+
+        print('Cell number went up by a factor {}\n'.format(total_growth_factor))
+    
+    #returning the refined mesh
+    return mesh
+
 def more_modified_refinement (mesh, location, how_many):
     '''Function to refine mesh locally, only refining cells containing one of the points described by the
     list of Dolfin Points location,a Point for each source. 
