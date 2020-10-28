@@ -51,7 +51,7 @@ volume_out = 4/3*pi*(radius_tot**3)
 #Standard deviation for coarse mass distribution and location of peaks. domain_size/3 corresponds to have
 #99.7% of the mass distribution inside the domain. Dividing that by some other factor makes it less 
 #likely that the masses will be outside the domain and throw an error
-stand_dev = domain_size/3/2
+stand_dev = domain_size/3/1.2
 #Standard deviation for the gaussian peaks themselves, Radius tot/3 so 99.7% of the mass is inside the 
 #equivalent dirac delta made with a uniform sphere
 stand_dev_peak = radius_tot/3*10
@@ -65,9 +65,9 @@ beta_GEA = 6/sqrt(2+c_2)
 plot_resolution = mesh_resolution
 #Size of the mesh for plotting. Should be bigger than the normal one or some points might be outside its domain
 mesh_plot_size = domain_size*0.8
-refine_times = 0
+refine_times = 6
 p = 1*kp
-source_number = 1
+source_number = 50
 source_mass = mgb/source_number
 radius_population = domain_size/2
 #Degree of the functionspace we want to solve the PDE on
@@ -108,7 +108,7 @@ lensing_interpolations = False
 plotting_option = False
 #Deciding if we want the sources to all be in the same plane (can make it easier to get good contours, or
 #for thin lens approximation for lensing)
-coplanar_sources = True
+coplanar_sources = False
 #Option to make the comparison between two solutions after the whole code has run
 make_comparison = False
 #Option to have the first mass of the distribution placed in the origin
