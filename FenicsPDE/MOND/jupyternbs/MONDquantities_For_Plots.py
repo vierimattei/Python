@@ -67,7 +67,7 @@ plot_resolution = mesh_resolution
 mesh_plot_size = domain_size*0.8
 refine_times = 6
 p = 1*kp
-source_number = 50
+source_number = 1
 source_mass = mgb/source_number
 radius_population = domain_size/2
 #Degree of the functionspace we want to solve the PDE on
